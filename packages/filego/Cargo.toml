@@ -1,0 +1,28 @@
+[package]
+name = "filego"
+version = "0.1.0"
+authors = ["Alpheus Tang"]
+edition = "2021"
+description = """
+Solution for splitting, checking and merging files
+"""
+readme = "README.md"
+homepage = "https://github.com/alpheustangs/filego-rust"
+repository = "https://github.com/alpheustangs/filego-rust"
+license-file = "LICENSE"
+keywords = [
+    "split",
+    "check",
+    "merge",
+    "util",
+    "fs",
+]
+categories = ["filesystem"]
+include = ["src/*", "Cargo.toml", "LICENSE", "README.md"]
+
+[lib]
+name = "filego"
+path = "src/lib.rs"
+
+[dependencies]
+tokio = { version = "1.37.0", features = ["fs", "io-util"] }

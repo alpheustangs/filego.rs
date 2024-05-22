@@ -1,0 +1,9 @@
+[package]
+name = "filego_test"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+filego = { workspace = true }
+tokio = { version = "1.37.0", features = ["macros", "rt"] }

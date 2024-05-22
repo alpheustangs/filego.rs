@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+members = [
+    "packages/__test__",
+    "packages/filego",
+]
+
+[workspace.dependencies]
+filego = { path = "packages/filego" }
