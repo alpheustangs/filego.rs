@@ -12,6 +12,23 @@ pub struct MergeOptions {
     pub out_file: String,
 }
 
+/// Merge the chunks from the directory to a specified path directly.
+/// Nothing will be returned as a result.
+///
+/// ## Example
+///
+/// ```no_run
+/// use filego::{merge, MergeOptions};
+///
+/// async fn example() {
+///     let options: MergeOptions = MergeOptions {
+///         in_dir: "path/to/dir".to_string(),
+///         out_file: "path/to/file".to_string(),
+///     };
+///
+///     merge(options).await.unwrap();
+/// }
+/// ```
 pub async fn merge(options: MergeOptions) -> ioa::Result<()> {
     // declarations
     let in_dir: &path::Path = path::Path::new(&options.in_dir);

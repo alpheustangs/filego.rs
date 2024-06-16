@@ -38,6 +38,8 @@ pub struct CheckResult {
     pub error: Option<CheckResultError>,
 }
 
+/// This implements `to_string` function for `CheckResultErrorType`
+/// to transfer the enum into string.
 impl fmt::Display for CheckResultErrorType {
     fn fmt(
         &self,
@@ -51,6 +53,26 @@ impl fmt::Display for CheckResultErrorType {
     }
 }
 
+/// Check file integrity by verifying the the chunks specified
+/// in the `in_dir` with `file_size`, `total_chunks` parameters.
+/// It will return whether the check is successful
+/// with the `success` bool and the `error` struct from the check if any error occurs.
+///
+/// ## Example
+///
+/// ```no_run
+/// use filego::{check, CheckOptions, CheckResult};
+///
+/// async fn example() {
+///     let options: CheckOptions = CheckOptions {
+///         in_dir: "path/to/dir".to_string(),
+///         file_size: 0, // result from split function...
+///         total_chunks: 0, // result from split function...
+///     };
+///
+///     let result: CheckResult = check(options).await.unwrap();
+/// }
+/// ```
 pub async fn check(options: CheckOptions) -> ioa::Result<CheckResult> {
     let in_dir: &path::Path = path::Path::new(&options.in_dir);
 

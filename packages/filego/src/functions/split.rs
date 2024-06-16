@@ -21,6 +21,24 @@ pub struct SplitResult {
     pub total_chunks: usize,
 }
 
+/// Split files from a file path to a directory directly.
+/// It will return the `file_size` and the `total_chunks` of the file.
+///
+/// ## Example
+///
+/// ```no_run
+/// use filego::{split, SplitOptions, SplitResult};
+///
+/// async fn example() {
+///     let options: SplitOptions = SplitOptions {
+///         in_file: "path/to/file".to_string(),
+///         out_dir: "path/to/dir".to_string(),
+///         chunk_size: 2 * 1024 * 1024,
+///     };
+///
+///     let result: SplitResult = split(options).await.unwrap();
+/// }
+/// ```
 pub async fn split(options: SplitOptions) -> ioa::Result<SplitResult> {
     // declarations
     let in_file: &path::Path = path::Path::new(&options.in_file);

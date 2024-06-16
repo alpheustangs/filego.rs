@@ -9,7 +9,7 @@ Solution for splitting, checking and merging files
 readme = "README.md"
 homepage = "https://github.com/alpheustangs/filego-rust"
 repository = "https://github.com/alpheustangs/filego-rust"
-license-file = "LICENSE"
+license = "MIT"
 keywords = [
     "split",
     "check",
@@ -17,8 +17,14 @@ keywords = [
     "util",
     "fs",
 ]
-categories = ["filesystem"]
-include = ["src/*", "Cargo.toml", "LICENSE", "README.md"]
+categories = [
+    "filesystem",
+]
+include = [
+    "src/*", 
+    "Cargo.toml", 
+    "README.md",
+]
 
 [lib]
 name = "filego"

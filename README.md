@@ -21,13 +21,15 @@ Split files from a file path to a directory directly. It will return the `file_s
 ```rust
 use filego::{split, SplitOptions, SplitResult};
 
-let options: SplitOptions = SplitOptions {
-    in_file: "path/to/file".to_string(),
-    out_dir: "path/to/dir".to_string(),
-    chunk_size: 2 * 1024 * 1024,
-};
+async fn example() {
+    let options: SplitOptions = SplitOptions {
+        in_file: "path/to/file".to_string(),
+        out_dir: "path/to/dir".to_string(),
+        chunk_size: 2 * 1024 * 1024,
+    };
 
-let result: SplitResult = split(options).await.unwrap();
+    let result: SplitResult = split(options).await.unwrap();
+}
 ```
 
 #### `check`
@@ -37,13 +39,15 @@ Check file integrity by verifying the the chunks specified in the `in_dir` with 
 ```rust
 use filego::{check, CheckOptions, CheckResult};
 
-let options: CheckOptions = CheckOptions {
-    in_dir: "path/to/dir".to_string(),
-    file_size: 123, // file size from split result
-    total_chunks: 123, // total chunks from splut result
-};
+async fn example() {
+    let options: CheckOptions = CheckOptions {
+        in_dir: "path/to/dir".to_string(),
+        file_size: 0, // result from split function...
+        total_chunks: 0, // result from split function...
+    };
 
-let result: CheckResult = check(options).await.unwrap();
+    let result: CheckResult = check(options).await.unwrap();
+}
 ```
 
 #### `merge`
@@ -53,12 +57,14 @@ Merge the chunks from the directory to a specified path directly. Nothing will b
 ```rust
 use filego::{merge, MergeOptions};
 
-let options: MergeOptions = MergeOptions {
-    in_dir: "path/to/dir".to_string(),
-    out_file: "path/to/file".to_string(),
-};
+async fn example() {
+    let options: MergeOptions = MergeOptions {
+        in_dir: "path/to/dir".to_string(),
+        out_file: "path/to/file".to_string(),
+    };
 
-merge(options).await.unwrap();
+    merge(options).await.unwrap();
+}
 ```
 
 ## License
