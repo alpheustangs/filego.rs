@@ -5,7 +5,7 @@ use tokio::{
     io::{self as ioa, AsyncReadExt, AsyncWriteExt},
 };
 
-/// Options for `split` function.
+/// Options for the `split` function.
 pub struct SplitOptions {
     /// Input file to be splitted in the `split` function.
     pub in_file: String,
@@ -15,7 +15,7 @@ pub struct SplitOptions {
     pub chunk_size: usize,
 }
 
-/// Result of `split` function.
+/// Result of the `split` function.
 pub struct SplitResult {
     /// Size of the original file.
     pub file_size: usize,
@@ -23,7 +23,7 @@ pub struct SplitResult {
     pub total_chunks: usize,
 }
 
-/// Split files from a file path to a directory directly.
+/// This function splits file from a path to a directory directly.
 /// It will return the `file_size` and the `total_chunks` of the file.
 ///
 /// ## Example

@@ -2,7 +2,7 @@ use std::{fmt, path};
 
 use tokio::{fs as fsa, io as ioa};
 
-/// Options for `check` function.
+/// Options for the `check` function.
 pub struct CheckOptions {
     /// Input directory to be checked in the `check` function.
     pub in_dir: String,
@@ -14,7 +14,7 @@ pub struct CheckOptions {
     pub total_chunks: usize,
 }
 
-/// Result error type of `check` function.
+/// Result error type of the `check` function.
 pub enum CheckResultErrorType {
     /// Some of the chunks are missing to merge the file.
     Missing,
@@ -22,7 +22,7 @@ pub enum CheckResultErrorType {
     Size,
 }
 
-/// Result error of `check` function.
+/// Result error of the `check` function.
 pub struct CheckResultError {
     /// Type of error of the check.
     pub error_type: CheckResultErrorType,
@@ -32,7 +32,7 @@ pub struct CheckResultError {
     pub missing: Option<Vec<usize>>,
 }
 
-/// Result of `check` function.
+/// Result of the `check` function.
 pub struct CheckResult {
     /// Successful / Failed check.
     pub success: bool,
@@ -55,7 +55,7 @@ impl fmt::Display for CheckResultErrorType {
     }
 }
 
-/// Check file integrity by verifying the the chunks specified
+/// This function checks file integrity by verifying the the chunks specified
 /// in the `in_dir` with `file_size`, `total_chunks` parameters.
 /// It will return whether the check is successful
 /// with the `success` bool and the `error` struct from the check if any error occurs.

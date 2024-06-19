@@ -16,7 +16,7 @@ Usage of different functions in FileGo:
 
 #### `split`
 
-Split files from a file path to a directory directly. It will return the `file_size` and the `total_chunks` of the file.
+This function splits file from a path to a directory directly. It will return the `file_size` and the `total_chunks` of the file.
 
 ```rust
 use filego::{split, SplitOptions, SplitResult};
@@ -34,7 +34,7 @@ async fn example() {
 
 #### `check`
 
-Check file integrity by verifying the the chunks specified in the `in_dir` with `file_size`, `total_chunks` parameters. It will return whether the check is successful with the `success` bool and the `error` struct from the check if any error occurs.
+This function checks file integrity by verifying the the chunks specified in the `in_dir` with `file_size`, `total_chunks` parameters. It will return whether the check is successful with the `success` bool and the `error` struct from the check if any error occurs.
 
 ```rust
 use filego::{check, CheckOptions, CheckResult};
@@ -52,7 +52,7 @@ async fn example() {
 
 #### `merge`
 
-Merge the chunks from the directory to a specified path directly. Nothing will be returned as a result.
+This function merges the chunks from a directory to a specified path directly. Therefore, nothing will be returned as a result.
 
 ```rust
 use filego::{merge, MergeOptions};

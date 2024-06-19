@@ -5,7 +5,7 @@ use tokio::{
     io::{self as ioa, AsyncReadExt, AsyncWriteExt},
 };
 
-/// Options for `merge` function.
+/// Options for the `merge` function.
 pub struct MergeOptions {
     /// Input directory to be merged in the `merge` function.
     pub in_dir: String,
@@ -13,8 +13,8 @@ pub struct MergeOptions {
     pub out_file: String,
 }
 
-/// Merge the chunks from the directory to a specified path directly.
-/// Nothing will be returned as a result.
+/// This function merges the chunks from a directory to a specified path directly.
+/// Therefore, nothing will be returned as a result.
 ///
 /// ## Example
 ///
