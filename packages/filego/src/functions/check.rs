@@ -7,10 +7,10 @@ pub struct CheckOptions {
     /// Input directory to be checked in the `check` function.
     pub in_dir: String,
     /// Size of the original file,
-    /// which can be found as an output of `split` function.
+    /// which can be found as an output of the `split` function.
     pub file_size: usize,
     /// Total number of chunks in the original file,
-    /// which can be found as an output of `split` function.
+    /// which can be found as an output of the `split` function.
     pub total_chunks: usize,
 }
 
