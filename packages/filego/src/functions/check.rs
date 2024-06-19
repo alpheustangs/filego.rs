@@ -2,39 +2,41 @@ use std::{fmt, path};
 
 use tokio::{fs as fsa, io as ioa};
 
+/// Options for `check` function.
 pub struct CheckOptions {
-    /// path to input directory
+    /// Input directory to be checked in the `check` function.
     pub in_dir: String,
-    /// input file size in byte
-    ///
-    /// `file_size` should be equal to `file_size` in `SplitResult`
+    /// Size of the original file,
+    /// which can be found as an output of `split` function.
     pub file_size: usize,
-    /// number of chunks
-    ///
-    /// `total_chunks` should be equal to `total_chunks` in `SplitResult`
+    /// Total number of chunks in the original file,
+    /// which can be found as an output of `split` function.
     pub total_chunks: usize,
 }
 
+/// Result error type of `check` function.
 pub enum CheckResultErrorType {
-    /// error type: Missing chunk(s)
+    /// Some of the chunks are missing to merge the file.
     Missing,
-    /// error type: Unmatched file size
+    /// The size of chunks do not match the `file_size` parameter.
     Size,
 }
 
+/// Result error of `check` function.
 pub struct CheckResultError {
-    /// error type
+    /// Type of error of the check.
     pub error_type: CheckResultErrorType,
-    /// error message
+    /// Error message of the check.
     pub message: String,
-    /// missing chunk(s) if any
+    /// Missing chunk(s) to merge the file.
     pub missing: Option<Vec<usize>>,
 }
 
+/// Result of `check` function.
 pub struct CheckResult {
-    /// success or not
+    /// Successful / Failed check.
     pub success: bool,
-    /// error on fail
+    /// Error details of the check.
     pub error: Option<CheckResultError>,
 }
 

@@ -5,10 +5,11 @@ use tokio::{
     io::{self as ioa, AsyncReadExt, AsyncWriteExt},
 };
 
+/// Options for `merge` function.
 pub struct MergeOptions {
-    /// path to input directory
+    /// Input directory to be merged in the `merge` function.
     pub in_dir: String,
-    /// path to output file
+    /// Output file after merging in the `merge` function.
     pub out_file: String,
 }
 
