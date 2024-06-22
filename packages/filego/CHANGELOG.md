@@ -1,3 +1,9 @@
+## 0.2.1 (2024-06-22)
+
+### What's Changed
+
+- Update `Cargo.toml`
+
 ## 0.2.0 (2024-06-19)
 
 ### What's New
