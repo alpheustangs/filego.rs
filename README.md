@@ -2,7 +2,7 @@
 
 A solution for splitting, checking and merging files.
 
-## Install
+## Installation
 
 To install FileGo, run the following command:
 
