@@ -1,13 +1,23 @@
 # FileGo
 
-Solution for splitting, checking and merging files.
+A solution for splitting, checking and merging files.
 
-## Install
+## Quick Start
 
-To install FileGo, run the following command:
+Split file from a path to a directory with the `split` function.
 
-```bash
-cargo add filego
+```rust
+use filego::{split, SplitOptions, SplitResult};
+
+async fn example() {
+    let options: SplitOptions = SplitOptions {
+        in_file: "path/to/file".to_string(),
+        out_dir: "path/to/dir".to_string(),
+        chunk_size: 2 * 1024 * 1024,
+    };
+
+    let split_result: SplitResult = split(options).await.unwrap();
+}
 ```
 
 ## License
