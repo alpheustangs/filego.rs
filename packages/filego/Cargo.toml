@@ -7,8 +7,8 @@ description = """
 A solution for splitting, checking and merging files
 """
 readme = "README.md"
-homepage = "https://github.com/alpheustangs/filego-rust"
-repository = "https://github.com/alpheustangs/filego-rust"
+homepage = "https://github.com/alpheustangs/filego.rs"
+repository = "https://github.com/alpheustangs/filego.rs"
 license = "MIT"
 keywords = [
     "split",
