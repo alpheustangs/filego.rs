@@ -1,3 +1,9 @@
+## 0.2.2 (2024-06-22)
+
+### What's Changed
+
+- Update docs
+
 ## 0.2.1 (2024-06-22)
 
 ### What's Changed
