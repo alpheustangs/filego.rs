@@ -4,7 +4,7 @@ version = "0.2.2"
 authors = ["Alpheus Tang"]
 edition = "2021"
 description = """
-A solution for splitting, checking and merging files
+A file splitting & merging solution
 """
 readme = "README.md"
 homepage = "https://github.com/alpheustangs/filego.rs"

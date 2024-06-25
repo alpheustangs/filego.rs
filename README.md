@@ -1,6 +1,6 @@
 # FileGo
 
-A solution for splitting, checking and merging files.
+A file splitting & merging solution.
 
 ## Installation
 
