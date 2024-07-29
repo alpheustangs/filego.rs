@@ -31,4 +31,4 @@ name = "filego"
 path = "src/lib.rs"
 
 [dependencies]
-tokio = { version = "1.39.1", features = ["fs", "io-util"] }
+tokio = { version = "1.39.2", features = ["fs", "io-util"] }
