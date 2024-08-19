@@ -6,4 +6,4 @@ publish = false
 
 [dependencies]
 filego = { workspace = true }
-tokio = { version = "1.39.2", features = ["macros", "rt"] }
+tokio = { version = "1.39.3", features = ["macros", "rt"] }
