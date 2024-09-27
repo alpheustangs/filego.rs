@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
-    "packages/__test__",
-    "packages/filego",
+    "__test__",
+    "package",
 ]
 
 [workspace.dependencies]
-filego = { path = "packages/filego" }
+filego = { path = "./package" }
