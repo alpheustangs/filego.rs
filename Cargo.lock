@@ -3,6 +3,14 @@
 version = 3
 
 [[package]]
+name = "__test__"
+version = "0.0.0"
+dependencies = [
+ "filego",
+ "tokio",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -54,14 +62,6 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 name = "filego"
 version = "0.2.3"
 dependencies = [
- "tokio",
-]
-
-[[package]]
-name = "filego_test"
-version = "0.1.0"
-dependencies = [
- "filego",
  "tokio",
 ]
 
