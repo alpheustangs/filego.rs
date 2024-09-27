@@ -4,7 +4,7 @@ A file splitting & merging solution.
 
 ## Installation
 
-To install FileGo, run the following command:
+To install this package, run the following command:
 
 ```bash
 cargo add filego
