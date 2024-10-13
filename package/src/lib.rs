@@ -7,12 +7,14 @@
 //! Split file from a path to a directory with the `split` function.
 //!
 //! ```no_run
-//! use filego::{split, SplitOptions, SplitResult};
+//! use std::path::PathBuf;
+//!
+//! use filego::split::{split, SplitOptions, SplitResult};
 //!
 //! async fn example() {
 //!     let options: SplitOptions = SplitOptions {
-//!         in_file: "path/to/file".to_string(),
-//!         out_dir: "path/to/dir".to_string(),
+//!         in_file: &PathBuf::from("path").join("to").join("file"),
+//!         out_dir: &PathBuf::from("path").join("to").join("dir"),
 //!         chunk_size: 2 * 1024 * 1024,
 //!     };
 //!
@@ -22,8 +24,20 @@
 
 mod functions;
 
-pub use functions::check::{
-    check, CheckOptions, CheckResult, CheckResultError, CheckResultErrorType,
-};
-pub use functions::merge::{merge, MergeOptions};
-pub use functions::split::{split, SplitOptions, SplitResult};
+/// Split module.
+pub mod split {
+    pub use crate::functions::split::{split, SplitOptions, SplitResult};
+}
+
+/// Check module.
+pub mod check {
+    pub use crate::functions::check::{
+        check, CheckOptions, CheckResult, CheckResultError,
+        CheckResultErrorType,
+    };
+}
+
+/// Merge module.
+pub mod merge {
+    pub use crate::functions::merge::{merge, MergeOptions};
+}

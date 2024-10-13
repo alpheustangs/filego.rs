@@ -1,4 +1,4 @@
-use std::path;
+use std::path::PathBuf;
 
 use tokio::{
     fs as fsa,
@@ -6,16 +6,18 @@ use tokio::{
 };
 
 /// Options for the `split` function.
-pub struct SplitOptions {
+#[derive(Debug, Clone)]
+pub struct SplitOptions<'a> {
     /// Input file to be splitted in the `split` function.
-    pub in_file: String,
+    pub in_file: &'a PathBuf,
     /// Output directory after splitted in the `split` function.
-    pub out_dir: String,
+    pub out_dir: &'a PathBuf,
     /// Size of each chunk in byte to be splitted.
     pub chunk_size: usize,
 }
 
 /// Result of the `split` function.
+#[derive(Debug, Clone)]
 pub struct SplitResult {
     /// Size of the original file.
     pub file_size: usize,
@@ -29,22 +31,24 @@ pub struct SplitResult {
 /// ## Example
 ///
 /// ```no_run
-/// use filego::{split, SplitOptions, SplitResult};
+/// use std::path::PathBuf;
+///
+/// use filego::split::{split, SplitOptions, SplitResult};
 ///
 /// async fn example() {
 ///     let options: SplitOptions = SplitOptions {
-///         in_file: "path/to/file".to_string(),
-///         out_dir: "path/to/dir".to_string(),
+///         in_file: &PathBuf::from("path").join("to").join("file"),
+///         out_dir: &PathBuf::from("path").join("to").join("dir"),
 ///         chunk_size: 2 * 1024 * 1024,
 ///     };
 ///
 ///     let result: SplitResult = split(options).await.unwrap();
 /// }
 /// ```
-pub async fn split(options: SplitOptions) -> ioa::Result<SplitResult> {
+pub async fn split(options: SplitOptions<'_>) -> ioa::Result<SplitResult> {
     // declarations
-    let in_file: &path::Path = path::Path::new(&options.in_file);
-    let out_dir: &path::Path = path::Path::new(&options.out_dir);
+    let in_file: &PathBuf = options.in_file;
+    let out_dir: &PathBuf = options.out_dir;
     let chunk_size: usize = options.chunk_size;
 
     // if inpath not exists
@@ -75,7 +79,7 @@ pub async fn split(options: SplitOptions) -> ioa::Result<SplitResult> {
 
     // if outdir not exists
     if !out_dir.exists() {
-        fsa::create_dir_all(out_dir).await?;
+        fsa::create_dir_all(&out_dir).await?;
     }
 
     let mut buffer: Vec<u8> = vec![0; chunk_size];
@@ -90,7 +94,7 @@ pub async fn split(options: SplitOptions) -> ioa::Result<SplitResult> {
         if read == 0 {
             if current > 0 {
                 // write the remaining data
-                let output_path: path::PathBuf =
+                let output_path: PathBuf =
                     out_dir.join(total_chunks.to_string());
 
                 let output: fsa::File = fsa::OpenOptions::new()
@@ -117,8 +121,7 @@ pub async fn split(options: SplitOptions) -> ioa::Result<SplitResult> {
 
         if current >= chunk_size {
             // write chunk
-            let output_path: path::PathBuf =
-                out_dir.join(total_chunks.to_string());
+            let output_path: PathBuf = out_dir.join(total_chunks.to_string());
 
             let output: fsa::File = fsa::OpenOptions::new()
                 .create(true)

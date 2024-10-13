@@ -1,4 +1,4 @@
-use std::{fs, path};
+use std::{fs, path::PathBuf};
 
 use tokio::{
     fs as fsa,
@@ -6,11 +6,12 @@ use tokio::{
 };
 
 /// Options for the `merge` function.
-pub struct MergeOptions {
+#[derive(Debug, Clone)]
+pub struct MergeOptions<'a> {
     /// Input directory to be merged in the `merge` function.
-    pub in_dir: String,
+    pub in_dir: &'a PathBuf,
     /// Output file after merging in the `merge` function.
-    pub out_file: String,
+    pub out_file: &'a PathBuf,
 }
 
 /// This function merges the chunks from a directory to a specified path directly.
@@ -19,27 +20,29 @@ pub struct MergeOptions {
 /// ## Example
 ///
 /// ```no_run
-/// use filego::{merge, MergeOptions};
+/// use std::path::PathBuf;
+///
+/// use filego::merge::{merge, MergeOptions};
 ///
 /// async fn example() {
 ///     let options: MergeOptions = MergeOptions {
-///         in_dir: "path/to/dir".to_string(),
-///         out_file: "path/to/file".to_string(),
+///         in_dir: &PathBuf::from("path").join("to").join("dir"),
+///         out_file: &PathBuf::from("path").join("to").join("file"),
 ///     };
 ///
 ///     merge(options).await.unwrap();
 /// }
 /// ```
-pub async fn merge(options: MergeOptions) -> ioa::Result<()> {
+pub async fn merge(options: MergeOptions<'_>) -> ioa::Result<()> {
     // declarations
-    let in_dir: &path::Path = path::Path::new(&options.in_dir);
-    let out_file: &path::Path = path::Path::new(&options.out_file);
+    let in_dir: &PathBuf = options.in_dir;
+    let out_file: &PathBuf = options.out_file;
 
     // if indir not exists
     if !in_dir.exists() {
         return Err(ioa::Error::new(
             ioa::ErrorKind::NotFound,
-            "in_dir path not found".to_string(),
+            "in_dir path not found",
         ));
     }
 
@@ -47,7 +50,7 @@ pub async fn merge(options: MergeOptions) -> ioa::Result<()> {
     if !in_dir.is_dir() {
         return Err(ioa::Error::new(
             ioa::ErrorKind::InvalidInput,
-            "in_dir is not a path to direcotry".to_string(),
+            "in_dir is not a path to direcotry",
         ));
     }
 
@@ -62,7 +65,7 @@ pub async fn merge(options: MergeOptions) -> ioa::Result<()> {
     } else {
         return Err(ioa::Error::new(
             ioa::ErrorKind::NotFound,
-            "No files found in in_dir".to_string(),
+            "No files found in in_dir",
         ));
     };
 
@@ -71,9 +74,9 @@ pub async fn merge(options: MergeOptions) -> ioa::Result<()> {
     // delete outpath target if exists
     if out_file.exists() {
         if out_file.is_dir() {
-            fsa::remove_dir_all(out_file).await?;
+            fsa::remove_dir_all(&out_file).await?;
         } else {
-            fsa::remove_file(out_file).await?;
+            fsa::remove_file(&out_file).await?;
         }
     }
 
@@ -94,7 +97,7 @@ pub async fn merge(options: MergeOptions) -> ioa::Result<()> {
         ioa::BufWriter::with_capacity(buffer_capacity, output);
 
     // get inputs
-    let mut entries: Vec<path::PathBuf> = fs::read_dir(in_dir)?
+    let mut entries: Vec<PathBuf> = fs::read_dir(in_dir)?
         .filter_map(Result::ok)
         .filter(|entry| entry.path().is_file())
         .map(|entry| entry.path())

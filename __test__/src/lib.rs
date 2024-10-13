@@ -1,10 +1,14 @@
 #[cfg(test)]
 mod tests {
-    use std::{env, fs, path};
+    use std::{env, fs, path::PathBuf};
 
     use filego::{
-        check, merge, split, CheckOptions, CheckResult, CheckResultErrorType,
-        MergeOptions, SplitOptions, SplitResult,
+        check::{
+            check, CheckOptions, CheckResult, CheckResultError,
+            CheckResultErrorType,
+        },
+        merge::{merge, MergeOptions},
+        split::{split, SplitOptions, SplitResult},
     };
     use tokio::io as ioa;
 
@@ -12,23 +16,23 @@ mod tests {
     async fn test() {
         // declarations
 
-        let root: path::PathBuf = env::current_dir().unwrap();
+        let root: PathBuf = env::current_dir().unwrap();
 
-        let file_id: String = "test".to_string();
-        let file_name: String = "test.txt".to_string();
+        let file_id: &str = "test";
+        let file_name: &str = "test.txt";
         let chunk_size: usize = 2 * 1024 * 1024;
 
-        let asset_path: path::PathBuf = root.join("assets").join(&file_name);
-        let cache_dir: path::PathBuf =
-            root.join(".media").join("cache").join(&file_id);
-        let output_path: path::PathBuf =
-            root.join(".media").join("output").join(file_id).join(file_name);
+        let asset_path: &PathBuf = &root.join("assets").join(file_name);
+        let cache_dir: &PathBuf =
+            &root.join(".media").join("cache").join(file_id);
+        let output_path: &PathBuf =
+            &root.join(".media").join("output").join(file_id).join(file_name);
 
         // split
 
         let options: SplitOptions = SplitOptions {
-            in_file: asset_path.to_string_lossy().to_string(),
-            out_dir: cache_dir.to_string_lossy().to_string(),
+            in_file: asset_path,
+            out_dir: cache_dir,
             chunk_size,
         };
 
@@ -47,7 +51,7 @@ mod tests {
         // check with missing error
 
         let options: CheckOptions = CheckOptions {
-            in_dir: cache_dir.to_string_lossy().to_string(),
+            in_dir: cache_dir,
             file_size: split_result.file_size,
             total_chunks: split_result.total_chunks + 1,
         };
@@ -55,15 +59,19 @@ mod tests {
         let check_result: CheckResult = check(options).await.unwrap();
 
         assert_eq!(check_result.success, false);
-        assert!(match check_result.error {
-            | Some(ref e) => match e.error_type {
+
+        let check_result_error: Option<CheckResultError> = check_result.error;
+
+        assert!(match &check_result_error {
+            | Some(e) => match e.error_type {
                 | CheckResultErrorType::Missing => true,
                 | _ => false,
             },
             | _ => false,
         });
-        assert!(match check_result.error {
-            | Some(ref e) => match e.error_type.to_string().as_str() {
+
+        assert!(match check_result_error {
+            | Some(e) => match e.error_type.as_code() {
                 | "missing" => true,
                 | _ => false,
             },
@@ -73,7 +81,7 @@ mod tests {
         // check with size error
 
         let options: CheckOptions = CheckOptions {
-            in_dir: cache_dir.to_string_lossy().to_string(),
+            in_dir: cache_dir,
             file_size: split_result.file_size + 1,
             total_chunks: split_result.total_chunks,
         };
@@ -81,15 +89,19 @@ mod tests {
         let check_result: CheckResult = check(options).await.unwrap();
 
         assert_eq!(check_result.success, false);
-        assert!(match check_result.error {
-            | Some(ref e) => match e.error_type {
+
+        let check_result_error: Option<CheckResultError> = check_result.error;
+
+        assert!(match &check_result_error {
+            | Some(e) => match e.error_type {
                 | CheckResultErrorType::Size => true,
                 | _ => false,
             },
             | _ => false,
         });
-        assert!(match check_result.error {
-            | Some(ref e) => match e.error_type.to_string().as_str() {
+
+        assert!(match check_result_error {
+            | Some(e) => match e.error_type.as_code() {
                 | "size" => true,
                 | _ => false,
             },
@@ -99,7 +111,7 @@ mod tests {
         // successful check
 
         let options: CheckOptions = CheckOptions {
-            in_dir: cache_dir.to_string_lossy().to_string(),
+            in_dir: cache_dir,
             file_size: split_result.file_size,
             total_chunks: split_result.total_chunks,
         };
@@ -110,10 +122,8 @@ mod tests {
 
         // merge
 
-        let options: MergeOptions = MergeOptions {
-            in_dir: cache_dir.to_string_lossy().to_string(),
-            out_file: output_path.to_string_lossy().to_string(),
-        };
+        let options: MergeOptions =
+            MergeOptions { in_dir: cache_dir, out_file: output_path };
 
         merge(options).await.unwrap();
 

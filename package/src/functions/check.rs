@@ -1,11 +1,12 @@
-use std::{fmt, path};
+use std::path::PathBuf;
 
 use tokio::{fs as fsa, io as ioa};
 
 /// Options for the `check` function.
-pub struct CheckOptions {
+#[derive(Debug, Clone)]
+pub struct CheckOptions<'a> {
     /// Input directory to be checked in the `check` function.
-    pub in_dir: String,
+    pub in_dir: &'a PathBuf,
     /// Size of the original file,
     /// which can be found as an output of the `split` function.
     pub file_size: usize,
@@ -15,6 +16,7 @@ pub struct CheckOptions {
 }
 
 /// Result error type of the `check` function.
+#[derive(Debug, Clone)]
 pub enum CheckResultErrorType {
     /// Some of the chunks are missing to merge the file.
     Missing,
@@ -22,7 +24,23 @@ pub enum CheckResultErrorType {
     Size,
 }
 
+impl CheckResultErrorType {
+    /// Get the code of the error type as `&str`.
+    pub fn as_code(&self) -> &str {
+        match self {
+            | Self::Missing => "missing",
+            | Self::Size => "size",
+        }
+    }
+
+    /// Get the code of the error type as `String`.
+    pub fn to_code(&self) -> String {
+        self.as_code().to_string()
+    }
+}
+
 /// Result error of the `check` function.
+#[derive(Debug, Clone)]
 pub struct CheckResultError {
     /// Type of error of the check.
     pub error_type: CheckResultErrorType,
@@ -33,26 +51,12 @@ pub struct CheckResultError {
 }
 
 /// Result of the `check` function.
+#[derive(Debug, Clone)]
 pub struct CheckResult {
     /// Successful / Failed check.
     pub success: bool,
     /// Error details of the check.
     pub error: Option<CheckResultError>,
-}
-
-/// This implements `to_string` function for `CheckResultErrorType`
-/// to transfer the enum into string.
-impl fmt::Display for CheckResultErrorType {
-    fn fmt(
-        &self,
-        f: &mut fmt::Formatter<'_>,
-    ) -> fmt::Result {
-        let s = match self {
-            | CheckResultErrorType::Missing => "missing",
-            | CheckResultErrorType::Size => "size",
-        };
-        write!(f, "{}", s)
-    }
 }
 
 /// This function checks file integrity by verifying the the chunks specified
@@ -63,11 +67,13 @@ impl fmt::Display for CheckResultErrorType {
 /// ## Example
 ///
 /// ```no_run
-/// use filego::{check, CheckOptions, CheckResult};
+/// use std::path::PathBuf;
+///
+/// use filego::check::{check, CheckOptions, CheckResult};
 ///
 /// async fn example() {
 ///     let options: CheckOptions = CheckOptions {
-///         in_dir: "path/to/dir".to_string(),
+///         in_dir: &PathBuf::from("path").join("to").join("dir"),
 ///         file_size: 0, // result from split function...
 ///         total_chunks: 0, // result from split function...
 ///     };
@@ -75,17 +81,17 @@ impl fmt::Display for CheckResultErrorType {
 ///     let result: CheckResult = check(options).await.unwrap();
 /// }
 /// ```
-pub async fn check(options: CheckOptions) -> ioa::Result<CheckResult> {
-    let in_dir: &path::Path = path::Path::new(&options.in_dir);
+pub async fn check(options: CheckOptions<'_>) -> ioa::Result<CheckResult> {
+    let in_dir: &PathBuf = options.in_dir;
 
-    if !path::Path::new(in_dir).exists() {
+    if !in_dir.exists() {
         return Err(ioa::Error::new(
             ioa::ErrorKind::NotFound,
             "in_dir path not found",
         ));
     }
 
-    if !path::Path::new(in_dir).is_dir() {
+    if !in_dir.is_dir() {
         return Err(ioa::Error::new(
             ioa::ErrorKind::InvalidInput,
             "in_dir is not a path to directory",
@@ -96,7 +102,7 @@ pub async fn check(options: CheckOptions) -> ioa::Result<CheckResult> {
     let mut missing: Vec<usize> = Vec::new();
 
     for i in 0..options.total_chunks {
-        let target_file: path::PathBuf = in_dir.join(i.to_string());
+        let target_file: PathBuf = in_dir.join(i.to_string());
 
         if !target_file.exists() || !target_file.is_file() {
             missing.push(i);

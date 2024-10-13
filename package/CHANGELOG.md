@@ -1,3 +1,28 @@
+## 0.3.0 (2024-10-13)
+
+### Breaking Changes
+
+- Move `split` related stuffs into `split` module
+- Move `check` related stuffs into `check` module
+- Move `merge` related stuffs into `merge` module
+- Changes in accepted value type of `in_file` in `SplitOptions`:
+    - `String` => `&PathBuf`
+- Changes in accepted value type of `out_dir` in `SplitOptions`:
+    - `String` => `&PathBuf`
+- Changes in accepted value type of `in_dir` in `CheckOptions`:
+    - `String` => `&PathBuf`
+- Remove `std::fmt::Display` impl from `CheckResultErrorType`
+- Changes in accepted value type of `in_dir` in `MergeOptions`:
+    - `String` => `&PathBuf`
+- Changes in accepted value type of `out_file` in `MergeOptions`:
+    - `String` => `&PathBuf`
+
+### What's New
+
+- Add different derives for different structs
+- Add `as_code` function for `CheckResultErrorType`
+- Add `to_code` function for `CheckResultErrorType`
+
 ## 0.2.3 (2024-08-04)
 
 ### What's Changed

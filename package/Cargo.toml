@@ -1,6 +1,6 @@
 [package]
 name = "filego"
-version = "0.2.3"
+version = "0.3.0"
 authors = ["Alpheus Tang"]
 edition = "2021"
 description = """
@@ -32,4 +32,4 @@ name = "filego"
 path = "src/lib.rs"
 
 [dependencies]
-tokio = { version = "1.40.0", features = ["fs", "io-util"] }
+tokio = { version = "^1.40.0", features = ["fs", "io-util"] }
