@@ -4,40 +4,39 @@
 //!
 //! ## Quick Start
 //!
-//! Split file from a path to a directory with the `split` function.
+//! Split file from a path to a directory with `Split` struct.
 //!
 //! ```no_run
 //! use std::path::PathBuf;
 //!
-//! use filego::split::{split, SplitOptions, SplitResult};
+//! use filego::split::{Split, SplitResult};
 //!
 //! async fn example() {
-//!     let options: SplitOptions = SplitOptions {
-//!         in_file: &PathBuf::from("path").join("to").join("file"),
-//!         out_dir: &PathBuf::from("path").join("to").join("dir"),
-//!         chunk_size: 2 * 1024 * 1024,
-//!     };
-//!
-//!     let split_result: SplitResult = split(options).await.unwrap();
+//!     let result: SplitResult = Split::new()
+//!         .in_file(PathBuf::from("path").join("to").join("file"))
+//!         .out_dir(PathBuf::from("path").join("to").join("dir"))
+//!         .run()
+//!         .await
+//!         .unwrap();
 //! }
 //! ```
 
-mod functions;
+mod function;
+
+/// Config module.
+pub mod config;
 
 /// Split module.
 pub mod split {
-    pub use crate::functions::split::{split, SplitOptions, SplitResult};
+    pub use crate::function::split::*;
 }
 
 /// Check module.
 pub mod check {
-    pub use crate::functions::check::{
-        check, CheckOptions, CheckResult, CheckResultError,
-        CheckResultErrorType,
-    };
+    pub use crate::function::check::*;
 }
 
 /// Merge module.
 pub mod merge {
-    pub use crate::functions::merge::{merge, MergeOptions};
+    pub use crate::function::merge::*;
 }
