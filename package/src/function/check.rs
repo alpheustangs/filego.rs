@@ -70,13 +70,13 @@ pub struct CheckResult {
 /// }
 /// ```
 #[derive(Debug, Clone)]
-pub struct Check<P: AsRef<Path>> {
-    in_dir: Option<P>,
+pub struct Check<InDir: AsRef<Path>> {
+    in_dir: Option<InDir>,
     file_size: usize,
     total_chunks: usize,
 }
 
-impl<P: AsRef<Path>> Check<P> {
+impl<InDir: AsRef<Path>> Check<InDir> {
     /// Create a new check process.
     pub fn new() -> Self {
         Self { in_dir: None, file_size: 0, total_chunks: 0 }
@@ -85,7 +85,7 @@ impl<P: AsRef<Path>> Check<P> {
     /// Set the input directory.
     pub fn in_dir(
         mut self,
-        in_dir: P,
+        in_dir: InDir,
     ) -> Self {
         self.in_dir = Some(in_dir);
         self

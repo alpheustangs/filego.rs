@@ -18,7 +18,7 @@ use crate::config::{BUFFER_CAPACITY_MAX, CHUNK_SIZE_DEFAULT};
 ///
 /// async fn example() {
 ///     let result: SplitResult = Split::new()
-///         .in_file(PathBuf::from("path").join("to").join("file"))
+///         .in_file("/path/to/file")
 ///         .out_dir(PathBuf::from("path").join("to").join("dir"))
 ///         .run()
 ///         .await
@@ -26,9 +26,9 @@ use crate::config::{BUFFER_CAPACITY_MAX, CHUNK_SIZE_DEFAULT};
 /// }
 /// ```
 #[derive(Debug, Clone)]
-pub struct Split<P: AsRef<Path>> {
-    in_file: Option<P>,
-    out_dir: Option<P>,
+pub struct Split<InFile: AsRef<Path>, OutDir: AsRef<Path>> {
+    in_file: Option<InFile>,
+    out_dir: Option<OutDir>,
     chunk_size: usize,
     cap_max: usize,
 }
@@ -42,7 +42,7 @@ pub struct SplitResult {
     pub total_chunks: usize,
 }
 
-impl<P: AsRef<Path>> Split<P> {
+impl<InFile: AsRef<Path>, OutDir: AsRef<Path>> Split<InFile, OutDir> {
     /// Create a new split process.
     pub fn new() -> Self {
         Self {
@@ -56,7 +56,7 @@ impl<P: AsRef<Path>> Split<P> {
     /// Set the input file.
     pub fn in_file(
         mut self,
-        in_file: P,
+        in_file: InFile,
     ) -> Self {
         self.in_file = Some(in_file);
         self
@@ -65,7 +65,7 @@ impl<P: AsRef<Path>> Split<P> {
     /// Set the output directory.
     pub fn out_dir(
         mut self,
-        out_dir: P,
+        out_dir: OutDir,
     ) -> Self {
         self.out_dir = Some(out_dir);
         self
@@ -235,7 +235,7 @@ impl<P: AsRef<Path>> Split<P> {
     }
 }
 
-impl<P: AsRef<Path>> Default for Split<P> {
+impl<P1: AsRef<Path>, P2: AsRef<Path>> Default for Split<P1, P2> {
     fn default() -> Self {
         Self::new()
     }

@@ -13,7 +13,7 @@ use filego::split::{Split, SplitResult};
 
 async fn example() {
     let result: SplitResult = Split::new()
-        .in_file(PathBuf::from("path").join("to").join("file"))
+        .in_file("/path/to/file")
         .out_dir(PathBuf::from("path").join("to").join("dir"))
         .run()
         .await

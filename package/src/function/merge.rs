@@ -29,13 +29,13 @@ use crate::config::BUFFER_CAPACITY_MAX;
 /// }
 /// ```
 #[derive(Debug, Clone)]
-pub struct Merge<P: AsRef<Path>> {
-    in_dir: Option<P>,
-    out_file: Option<P>,
+pub struct Merge<InDir: AsRef<Path>, OutFile: AsRef<Path>> {
+    in_dir: Option<InDir>,
+    out_file: Option<OutFile>,
     cap_max: usize,
 }
 
-impl<P: AsRef<Path>> Merge<P> {
+impl<InDir: AsRef<Path>, OutFile: AsRef<Path>> Merge<InDir, OutFile> {
     /// Create a new merge process.
     pub fn new() -> Self {
         Self { in_dir: None, out_file: None, cap_max: BUFFER_CAPACITY_MAX }
@@ -44,7 +44,7 @@ impl<P: AsRef<Path>> Merge<P> {
     /// Set the input directory.
     pub fn in_dir(
         mut self,
-        in_dir: P,
+        in_dir: InDir,
     ) -> Self {
         self.in_dir = Some(in_dir);
         self
@@ -53,7 +53,7 @@ impl<P: AsRef<Path>> Merge<P> {
     /// Set the output file.
     pub fn out_file(
         mut self,
-        out_file: P,
+        out_file: OutFile,
     ) -> Self {
         self.out_file = Some(out_file);
         self
@@ -201,7 +201,7 @@ impl<P: AsRef<Path>> Merge<P> {
     }
 }
 
-impl<P: AsRef<Path>> Default for Merge<P> {
+impl<P1: AsRef<Path>, P2: AsRef<Path>> Default for Merge<P1, P2> {
     fn default() -> Self {
         Self::new()
     }
