@@ -1,3 +1,22 @@
+## 0.4.0 (2024-10-26)
+
+### Breaking Changes
+
+- Rework in `split` module
+- Rework in `check` module
+- Rework in `merge` module
+
+Please refer to docs for the new usage.
+
+### What's New
+
+- Add `config` module
+
+### What's Changed
+
+- Update dependencies
+- Update documentation
+
 ## 0.3.0 (2024-10-13)
 
 ### Breaking Changes

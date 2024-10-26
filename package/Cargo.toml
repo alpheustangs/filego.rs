@@ -1,6 +1,6 @@
 [package]
 name = "filego"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Alpheus Tang"]
 edition = "2021"
 description = """
