@@ -79,24 +79,24 @@ pub struct CheckResult {
 /// }
 /// ```
 #[derive(Debug, Clone)]
-pub struct Check<InDir: AsRef<Path>> {
-    in_dir: Option<InDir>,
+pub struct Check {
+    in_dir: Option<PathBuf>,
     file_size: usize,
     total_chunks: usize,
 }
 
-impl<InDir: AsRef<Path>> Check<InDir> {
+impl Check {
     /// Create a new check process.
     pub fn new() -> Self {
         Self { in_dir: None, file_size: 0, total_chunks: 0 }
     }
 
     /// Set the input directory.
-    pub fn in_dir(
+    pub fn in_dir<InDir: AsRef<Path>>(
         mut self,
         in_dir: InDir,
     ) -> Self {
-        self.in_dir = Some(in_dir);
+        self.in_dir = Some(in_dir.as_ref().to_path_buf());
         self
     }
 
@@ -198,7 +198,7 @@ impl<InDir: AsRef<Path>> Check<InDir> {
     }
 }
 
-impl<P: AsRef<Path>> Default for Check<P> {
+impl Default for Check {
     fn default() -> Self {
         Self::new()
     }

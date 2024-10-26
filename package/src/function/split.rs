@@ -26,9 +26,9 @@ use crate::config::{BUFFER_CAPACITY_MAX, CHUNK_SIZE_DEFAULT};
 /// }
 /// ```
 #[derive(Debug, Clone)]
-pub struct Split<InFile: AsRef<Path>, OutDir: AsRef<Path>> {
-    in_file: Option<InFile>,
-    out_dir: Option<OutDir>,
+pub struct Split {
+    in_file: Option<PathBuf>,
+    out_dir: Option<PathBuf>,
     chunk_size: usize,
     cap_max: usize,
 }
@@ -42,7 +42,7 @@ pub struct SplitResult {
     pub total_chunks: usize,
 }
 
-impl<InFile: AsRef<Path>, OutDir: AsRef<Path>> Split<InFile, OutDir> {
+impl Split {
     /// Create a new split process.
     pub fn new() -> Self {
         Self {
@@ -54,20 +54,20 @@ impl<InFile: AsRef<Path>, OutDir: AsRef<Path>> Split<InFile, OutDir> {
     }
 
     /// Set the input file.
-    pub fn in_file(
+    pub fn in_file<InFile: AsRef<Path>>(
         mut self,
         in_file: InFile,
     ) -> Self {
-        self.in_file = Some(in_file);
+        self.in_file = Some(in_file.as_ref().to_path_buf());
         self
     }
 
     /// Set the output directory.
-    pub fn out_dir(
+    pub fn out_dir<OutDir: AsRef<Path>>(
         mut self,
         out_dir: OutDir,
     ) -> Self {
-        self.out_dir = Some(out_dir);
+        self.out_dir = Some(out_dir.as_ref().to_path_buf());
         self
     }
 
@@ -235,7 +235,7 @@ impl<InFile: AsRef<Path>, OutDir: AsRef<Path>> Split<InFile, OutDir> {
     }
 }
 
-impl<P1: AsRef<Path>, P2: AsRef<Path>> Default for Split<P1, P2> {
+impl Default for Split {
     fn default() -> Self {
         Self::new()
     }

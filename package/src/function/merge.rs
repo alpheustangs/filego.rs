@@ -10,7 +10,7 @@ use tokio::{
 
 use crate::config::BUFFER_CAPACITY_MAX;
 
-/// Process to merge chunks from a directory to a specified path.
+/// Process to merge chunks from a directory to a path.
 ///
 /// ## Example
 ///
@@ -29,33 +29,33 @@ use crate::config::BUFFER_CAPACITY_MAX;
 /// }
 /// ```
 #[derive(Debug, Clone)]
-pub struct Merge<InDir: AsRef<Path>, OutFile: AsRef<Path>> {
-    in_dir: Option<InDir>,
-    out_file: Option<OutFile>,
+pub struct Merge {
+    in_dir: Option<PathBuf>,
+    out_file: Option<PathBuf>,
     cap_max: usize,
 }
 
-impl<InDir: AsRef<Path>, OutFile: AsRef<Path>> Merge<InDir, OutFile> {
+impl Merge {
     /// Create a new merge process.
     pub fn new() -> Self {
         Self { in_dir: None, out_file: None, cap_max: BUFFER_CAPACITY_MAX }
     }
 
     /// Set the input directory.
-    pub fn in_dir(
+    pub fn in_dir<InDir: AsRef<Path>>(
         mut self,
         in_dir: InDir,
     ) -> Self {
-        self.in_dir = Some(in_dir);
+        self.in_dir = Some(in_dir.as_ref().to_path_buf());
         self
     }
 
     /// Set the output file.
-    pub fn out_file(
+    pub fn out_file<OutFile: AsRef<Path>>(
         mut self,
         out_file: OutFile,
     ) -> Self {
-        self.out_file = Some(out_file);
+        self.out_file = Some(out_file.as_ref().to_path_buf());
         self
     }
 
@@ -201,7 +201,7 @@ impl<InDir: AsRef<Path>, OutFile: AsRef<Path>> Merge<InDir, OutFile> {
     }
 }
 
-impl<P1: AsRef<Path>, P2: AsRef<Path>> Default for Merge<P1, P2> {
+impl Default for Merge {
     fn default() -> Self {
         Self::new()
     }
