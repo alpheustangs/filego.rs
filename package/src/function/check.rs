@@ -12,6 +12,15 @@ pub enum CheckResultErrorType {
 }
 
 impl CheckResultErrorType {
+    /// Get the error type from code.
+    pub fn from_code<C: AsRef<str>>(code: C) -> Option<Self> {
+        match code.as_ref() {
+            | "missing" => Some(Self::Missing),
+            | "size" => Some(Self::Size),
+            | _ => None,
+        }
+    }
+
     /// Get the code of the error type as `&str`.
     pub fn as_code(&self) -> &str {
         match self {
