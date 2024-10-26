@@ -5,7 +5,7 @@ use tokio::{
     io::{self as ioa, AsyncReadExt, AsyncWriteExt},
 };
 
-use crate::config::{BUFFER_CAPACITY_MAX, CHUNK_SIZE_DEFAULT};
+use crate::config::{BUFFER_CAPACITY_MAX_DEFAULT, CHUNK_SIZE_DEFAULT};
 
 /// Process to split file from a path to a directory.
 ///
@@ -33,7 +33,7 @@ pub struct Split {
     cap_max: usize,
 }
 
-/// Result of the `split` function.
+/// Result of the split process.
 #[derive(Debug, Clone)]
 pub struct SplitResult {
     /// Size of the original file.
@@ -49,25 +49,25 @@ impl Split {
             in_file: None,
             out_dir: None,
             chunk_size: CHUNK_SIZE_DEFAULT,
-            cap_max: BUFFER_CAPACITY_MAX,
+            cap_max: BUFFER_CAPACITY_MAX_DEFAULT,
         }
     }
 
     /// Set the input file.
     pub fn in_file<InFile: AsRef<Path>>(
         mut self,
-        in_file: InFile,
+        path: InFile,
     ) -> Self {
-        self.in_file = Some(in_file.as_ref().to_path_buf());
+        self.in_file = Some(path.as_ref().to_path_buf());
         self
     }
 
     /// Set the output directory.
     pub fn out_dir<OutDir: AsRef<Path>>(
         mut self,
-        out_dir: OutDir,
+        path: OutDir,
     ) -> Self {
-        self.out_dir = Some(out_dir.as_ref().to_path_buf());
+        self.out_dir = Some(path.as_ref().to_path_buf());
         self
     }
 
@@ -76,9 +76,9 @@ impl Split {
     /// By default, the chunk size follows the [`CHUNK_SIZE_DEFAULT`].
     pub fn chunk_size(
         mut self,
-        chunk_size: usize,
+        size: usize,
     ) -> Self {
-        self.chunk_size = chunk_size;
+        self.chunk_size = size;
         self
     }
 

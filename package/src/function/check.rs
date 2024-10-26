@@ -2,12 +2,12 @@ use std::path::{Path, PathBuf};
 
 use tokio::{fs as fsa, io as ioa};
 
-/// Result error type of the `check` function.
+/// Error type of the result from the check process.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CheckResultErrorType {
     /// Some of the chunks are missing to merge the file.
     Missing,
-    /// The size of chunks do not match the `file_size` parameter.
+    /// The actual file size is not equal the input file size.
     Size,
 }
 
@@ -35,7 +35,7 @@ impl CheckResultErrorType {
     }
 }
 
-/// Result error of the `check` function.
+/// Error of the result from the check process.
 #[derive(Debug, Clone)]
 pub struct CheckResultError {
     /// Type of error of the check.
@@ -46,7 +46,7 @@ pub struct CheckResultError {
     pub missing: Option<Vec<usize>>,
 }
 
-/// Result of the `check` function.
+/// Result of the check process.
 #[derive(Debug, Clone)]
 pub struct CheckResult {
     /// Successful / Failed check.
@@ -81,40 +81,40 @@ pub struct CheckResult {
 #[derive(Debug, Clone)]
 pub struct Check {
     in_dir: Option<PathBuf>,
-    file_size: usize,
-    total_chunks: usize,
+    file_size: Option<usize>,
+    total_chunks: Option<usize>,
 }
 
 impl Check {
     /// Create a new check process.
     pub fn new() -> Self {
-        Self { in_dir: None, file_size: 0, total_chunks: 0 }
+        Self { in_dir: None, file_size: None, total_chunks: None }
     }
 
     /// Set the input directory.
     pub fn in_dir<InDir: AsRef<Path>>(
         mut self,
-        in_dir: InDir,
+        path: InDir,
     ) -> Self {
-        self.in_dir = Some(in_dir.as_ref().to_path_buf());
+        self.in_dir = Some(path.as_ref().to_path_buf());
         self
     }
 
     /// Set the size of the original file.
     pub fn file_size(
         mut self,
-        file_size: usize,
+        size: usize,
     ) -> Self {
-        self.file_size = file_size;
+        self.file_size = Some(size);
         self
     }
 
     /// Set the total number of chunks splitted from the original file.
     pub fn total_chunks(
         mut self,
-        total_chunks: usize,
+        chunks: usize,
     ) -> Self {
-        self.total_chunks = total_chunks;
+        self.total_chunks = Some(chunks);
         self
     }
 
@@ -150,10 +150,30 @@ impl Check {
             },
         };
 
+        let file_size: usize = match self.file_size {
+            | Some(s) => s,
+            | None => {
+                return Err(ioa::Error::new(
+                    ioa::ErrorKind::InvalidInput,
+                    "file_size is not set",
+                ))
+            },
+        };
+
+        let total_chunks: usize = match self.total_chunks {
+            | Some(s) => s,
+            | None => {
+                return Err(ioa::Error::new(
+                    ioa::ErrorKind::InvalidInput,
+                    "total_chunks is not set",
+                ))
+            },
+        };
+
         let mut actual_size: usize = 0;
         let mut missing: Vec<usize> = Vec::new();
 
-        for i in 0..self.total_chunks {
+        for i in 0..total_chunks {
             let target_file: PathBuf = in_dir.join(i.to_string());
 
             if !target_file.exists() || !target_file.is_file() {
@@ -181,7 +201,7 @@ impl Check {
             });
         }
 
-        if actual_size != self.file_size {
+        if actual_size != file_size {
             return Ok(CheckResult {
                 success: false,
                 error: Some(CheckResultError {

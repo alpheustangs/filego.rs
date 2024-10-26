@@ -8,7 +8,7 @@ use tokio::{
     io::{self as ioa, AsyncReadExt, AsyncWriteExt},
 };
 
-use crate::config::BUFFER_CAPACITY_MAX;
+use crate::config::BUFFER_CAPACITY_MAX_DEFAULT;
 
 /// Process to merge chunks from a directory to a path.
 ///
@@ -38,24 +38,28 @@ pub struct Merge {
 impl Merge {
     /// Create a new merge process.
     pub fn new() -> Self {
-        Self { in_dir: None, out_file: None, cap_max: BUFFER_CAPACITY_MAX }
+        Self {
+            in_dir: None,
+            out_file: None,
+            cap_max: BUFFER_CAPACITY_MAX_DEFAULT,
+        }
     }
 
     /// Set the input directory.
     pub fn in_dir<InDir: AsRef<Path>>(
         mut self,
-        in_dir: InDir,
+        path: InDir,
     ) -> Self {
-        self.in_dir = Some(in_dir.as_ref().to_path_buf());
+        self.in_dir = Some(path.as_ref().to_path_buf());
         self
     }
 
     /// Set the output file.
     pub fn out_file<OutFile: AsRef<Path>>(
         mut self,
-        out_file: OutFile,
+        path: OutFile,
     ) -> Self {
-        self.out_file = Some(out_file.as_ref().to_path_buf());
+        self.out_file = Some(path.as_ref().to_path_buf());
         self
     }
 

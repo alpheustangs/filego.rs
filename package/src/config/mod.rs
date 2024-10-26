@@ -1,5 +1,5 @@
-/// The default chunk size.
-pub const CHUNK_SIZE_DEFAULT: usize = 2 * 1024 * 1024; // 2 MiB
+/// The default chunk size in bytes.
+pub const CHUNK_SIZE_DEFAULT: usize = 2 * 1024 * 1024;
 
-/// The maximum size of the buffer capacity.
-pub const BUFFER_CAPACITY_MAX: usize = 10 * 1024 * 1024; // 10MiB
+/// The default maximum size of the buffer capacity in bytes.
+pub const BUFFER_CAPACITY_MAX_DEFAULT: usize = 10 * 1024 * 1024;
