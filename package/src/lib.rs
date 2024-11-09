@@ -21,22 +21,22 @@
 //! }
 //! ```
 
-mod function;
+mod functions;
 
 /// Config module.
 pub mod config;
 
 /// Split module.
 pub mod split {
-    pub use crate::function::split::*;
+    pub use crate::functions::split::*;
 }
 
 /// Check module.
 pub mod check {
-    pub use crate::function::check::*;
+    pub use crate::functions::check::*;
 }
 
 /// Merge module.
 pub mod merge {
-    pub use crate::function::merge::*;
+    pub use crate::functions::merge::*;
 }
