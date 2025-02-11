@@ -1,6 +1,19 @@
-use std::path::{Path, PathBuf};
+use std::{
+    fs, io,
+    path::{Path, PathBuf},
+};
 
-use tokio::{fs as fsa, io as ioa};
+/// Run process with `async-std`.
+#[cfg(feature = "async-std")]
+pub mod async_std {
+    pub use crate::async_std::check::AsyncCheckExt;
+}
+
+/// Run process with `tokio`.
+#[cfg(feature = "tokio")]
+pub mod tokio {
+    pub use crate::tokio::check::AsyncCheckExt;
+}
 
 /// Error type of the result from the check process.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -68,21 +81,20 @@ pub struct CheckResult {
 ///
 /// use filego::check::{Check, CheckResult};
 ///
-/// async fn example() {
+/// fn example() {
 ///     let result: CheckResult = Check::new()
 ///         .in_dir(PathBuf::from("path").join("to").join("dir"))
 ///         .file_size(0) // result from split function...
 ///         .total_chunks(0) // result from split function...
 ///         .run()
-///         .await
 ///         .unwrap();
 /// }
 /// ```
 #[derive(Debug, Clone)]
 pub struct Check {
-    in_dir: Option<PathBuf>,
-    file_size: Option<usize>,
-    total_chunks: Option<usize>,
+    pub in_dir: Option<PathBuf>,
+    pub file_size: Option<usize>,
+    pub total_chunks: Option<usize>,
 }
 
 impl Check {
@@ -119,23 +131,23 @@ impl Check {
     }
 
     /// Run the check process.
-    pub async fn run(self) -> ioa::Result<CheckResult> {
+    pub fn run(&self) -> io::Result<CheckResult> {
         let in_dir: &Path = match self.in_dir {
             | Some(ref p) => {
                 let p: &Path = p.as_ref();
 
                 // if in_dir not exists
                 if !p.exists() {
-                    return Err(ioa::Error::new(
-                        ioa::ErrorKind::NotFound,
+                    return Err(io::Error::new(
+                        io::ErrorKind::NotFound,
                         "in_dir path not found",
                     ));
                 }
 
                 // if in_dir not a directory
                 if !p.is_dir() {
-                    return Err(ioa::Error::new(
-                        ioa::ErrorKind::InvalidInput,
+                    return Err(io::Error::new(
+                        io::ErrorKind::InvalidInput,
                         "in_dir is not a directory",
                     ));
                 }
@@ -143,8 +155,8 @@ impl Check {
                 p
             },
             | None => {
-                return Err(ioa::Error::new(
-                    ioa::ErrorKind::InvalidInput,
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
                     "in_dir is not set",
                 ))
             },
@@ -153,8 +165,8 @@ impl Check {
         let file_size: usize = match self.file_size {
             | Some(s) => s,
             | None => {
-                return Err(ioa::Error::new(
-                    ioa::ErrorKind::InvalidInput,
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
                     "file_size is not set",
                 ))
             },
@@ -163,8 +175,8 @@ impl Check {
         let total_chunks: usize = match self.total_chunks {
             | Some(s) => s,
             | None => {
-                return Err(ioa::Error::new(
-                    ioa::ErrorKind::InvalidInput,
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
                     "total_chunks is not set",
                 ))
             },
@@ -181,12 +193,10 @@ impl Check {
                 continue;
             }
 
-            actual_size += fsa::OpenOptions::new()
+            actual_size += fs::OpenOptions::new()
                 .read(true)
-                .open(&target_file)
-                .await?
-                .metadata()
-                .await?
+                .open(&target_file)?
+                .metadata()?
                 .len() as usize;
         }
 

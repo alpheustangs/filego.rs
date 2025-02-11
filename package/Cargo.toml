@@ -1,6 +1,6 @@
 [package]
 name = "filego"
-version = "0.4.1"
+version = "0.5.0"
 authors = ["Alpheus Tang"]
 edition = "2021"
 description = """
@@ -31,5 +31,17 @@ include = [
 name = "filego"
 path = "src/lib.rs"
 
-[dependencies]
-tokio = { version = "^1.43.0", features = ["fs", "io-util"] }
+[features]
+default = []
+async-std = ["dep:async-std"]
+async_std = ["async-std"]
+tokio = ["dep:tokio"]
+
+[dependencies.async-std]
+version = "^1.13.0"
+optional = true
+
+[dependencies.tokio]
+version = "^1.43.0"
+optional = true
+features = ["fs", "io-util"]

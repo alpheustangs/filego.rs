@@ -5,96 +5,37 @@ use std::{
 
 use tokio::{
     fs as fsa,
-    io::{self as ioa, AsyncReadExt, AsyncWriteExt},
+    io::{self, AsyncReadExt, AsyncWriteExt},
 };
 
-use crate::config::BUFFER_CAPACITY_MAX_DEFAULT;
+use crate::merge::Merge;
 
-/// Process to merge chunks from a directory to a path.
-///
-/// ## Example
-///
-/// ```no_run
-/// use std::path::PathBuf;
-///
-/// use filego::merge::Merge;
-///
-/// async fn example() {
-///     let result: bool = Merge::new()
-///         .in_dir(PathBuf::from("path").join("to").join("dir"))
-///         .out_file(PathBuf::from("path").join("to").join("file"))
-///         .run()
-///         .await
-///         .unwrap();
-/// }
-/// ```
-#[derive(Debug, Clone)]
-pub struct Merge {
-    in_dir: Option<PathBuf>,
-    out_file: Option<PathBuf>,
-    cap_max: usize,
+/// Trait for running the merge process.
+pub trait AsyncMergeExt {
+    /// Run the check process asynchronously.
+    fn run_async(
+        &self
+    ) -> impl std::future::Future<Output = io::Result<bool>> + Send;
 }
 
-impl Merge {
-    /// Create a new merge process.
-    pub fn new() -> Self {
-        Self {
-            in_dir: None,
-            out_file: None,
-            cap_max: BUFFER_CAPACITY_MAX_DEFAULT,
-        }
-    }
-
-    /// Set the input directory.
-    pub fn in_dir<InDir: AsRef<Path>>(
-        mut self,
-        path: InDir,
-    ) -> Self {
-        self.in_dir = Some(path.as_ref().to_path_buf());
-        self
-    }
-
-    /// Set the output file.
-    pub fn out_file<OutFile: AsRef<Path>>(
-        mut self,
-        path: OutFile,
-    ) -> Self {
-        self.out_file = Some(path.as_ref().to_path_buf());
-        self
-    }
-
-    /// Set the maximum size of the buffer capacity.
-    ///
-    /// By default, the buffer capacity is based on the size of the inputs in
-    /// the input directory. The buffer capacity is limited and will not
-    /// exceed [`BUFFER_CAPACITY_MAX`]. The default value is recommended
-    /// unless a large size file will be processed through the split process.
-    pub fn max_buffer_capacity(
-        mut self,
-        capacity: usize,
-    ) -> Self {
-        self.cap_max = capacity;
-        self
-    }
-
-    /// Run the merge process.
-    pub async fn run(self) -> ioa::Result<bool> {
+impl AsyncMergeExt for Merge {
+    async fn run_async(&self) -> io::Result<bool> {
         let in_dir: &Path = match self.in_dir {
             | Some(ref p) => {
                 let p: &Path = p.as_ref();
 
                 // if in_dir not exists
                 if !p.exists() {
-                    return Err(ioa::Error::new(
-                        ioa::ErrorKind::NotFound,
+                    return Err(io::Error::new(
+                        io::ErrorKind::NotFound,
                         "in_dir path not found",
                     ));
                 }
 
                 // if in_dir not a directory
                 if !p.is_dir() {
-                    return Err(ioa::Error::new(
-                        ioa::ErrorKind::InvalidInput,
+                    return Err(io::Error::new(
+                        io::ErrorKind::InvalidInput,
                         "in_dir is not a directory",
                     ));
                 }
@@ -102,8 +43,8 @@ impl Merge {
                 p
             },
             | None => {
-                return Err(ioa::Error::new(
-                    ioa::ErrorKind::InvalidInput,
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
                     "in_dir is not set",
                 ))
             },
@@ -112,8 +53,8 @@ impl Merge {
         let out_file: &Path = match self.out_file {
             | Some(ref p) => p.as_ref(),
             | None => {
-                return Err(ioa::Error::new(
-                    ioa::ErrorKind::InvalidInput,
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
                     "out_file is not set",
                 ))
             },
@@ -128,8 +69,8 @@ impl Merge {
         {
             fsa::metadata(file).await?.len() as usize
         } else {
-            return Err(ioa::Error::new(
-                ioa::ErrorKind::NotFound,
+            return Err(io::Error::new(
+                io::ErrorKind::NotFound,
                 "No files found in in_dir",
             ));
         };
@@ -158,8 +99,8 @@ impl Merge {
             .await?;
 
         // writer
-        let mut writer: ioa::BufWriter<fsa::File> =
-            ioa::BufWriter::with_capacity(buffer_capacity, output);
+        let mut writer: io::BufWriter<fsa::File> =
+            io::BufWriter::with_capacity(buffer_capacity, output);
 
         // get inputs
         let mut entries: Vec<PathBuf> = fs::read_dir(in_dir)?
@@ -183,8 +124,8 @@ impl Merge {
             let input: fsa::File =
                 fsa::OpenOptions::new().read(true).open(&entry).await?;
 
-            let mut reader: ioa::BufReader<fsa::File> =
-                ioa::BufReader::with_capacity(buffer_capacity, input);
+            let mut reader: io::BufReader<fsa::File> =
+                io::BufReader::with_capacity(buffer_capacity, input);
 
             let mut buffer: Vec<u8> = vec![0; buffer_capacity];
 
@@ -202,11 +143,5 @@ impl Merge {
         writer.flush().await?;
 
         Ok(true)
-    }
-}
-
-impl Default for Merge {
-    fn default() -> Self {
-        Self::new()
     }
 }

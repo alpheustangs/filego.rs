@@ -1,11 +1,22 @@
-use std::path::{Path, PathBuf};
-
-use tokio::{
-    fs as fsa,
-    io::{self as ioa, AsyncReadExt, AsyncWriteExt},
+use std::{
+    fs,
+    io::{self as io, Read as _, Write as _},
+    path::{Path, PathBuf},
 };
 
-use crate::config::{BUFFER_CAPACITY_MAX_DEFAULT, CHUNK_SIZE_DEFAULT};
+use crate::{BUFFER_CAPACITY_MAX_DEFAULT, CHUNK_SIZE_DEFAULT};
+
+/// Run process with `async-std`.
+#[cfg(feature = "async-std")]
+pub mod async_std {
+    pub use crate::async_std::split::AsyncSplitExt;
+}
+
+/// Run process with `tokio`.
+#[cfg(feature = "tokio")]
+pub mod tokio {
+    pub use crate::tokio::split::AsyncSplitExt;
+}
 
 /// Process to split file from a path to a directory.
 ///
@@ -16,21 +27,20 @@ use crate::config::{BUFFER_CAPACITY_MAX_DEFAULT, CHUNK_SIZE_DEFAULT};
 ///
 /// use filego::split::{Split, SplitResult};
 ///
-/// async fn example() {
+/// fn example() {
 ///     let result: SplitResult = Split::new()
-///         .in_file("/path/to/file")
+///         .in_file(PathBuf::from("path").join("to").join("file"))
 ///         .out_dir(PathBuf::from("path").join("to").join("dir"))
 ///         .run()
-///         .await
 ///         .unwrap();
 /// }
 /// ```
 #[derive(Debug, Clone)]
 pub struct Split {
-    in_file: Option<PathBuf>,
-    out_dir: Option<PathBuf>,
-    chunk_size: usize,
-    cap_max: usize,
+    pub in_file: Option<PathBuf>,
+    pub out_dir: Option<PathBuf>,
+    pub chunk_size: usize,
+    pub cap_max: usize,
 }
 
 /// Result of the split process.
@@ -97,23 +107,23 @@ impl Split {
     }
 
     /// Run the split process.
-    pub async fn run(self) -> ioa::Result<SplitResult> {
+    pub fn run(&self) -> io::Result<SplitResult> {
         let in_file: &Path = match self.in_file {
             | Some(ref p) => {
                 let p: &Path = p.as_ref();
 
                 // if in_file not exists
                 if !p.exists() {
-                    return Err(ioa::Error::new(
-                        ioa::ErrorKind::NotFound,
+                    return Err(io::Error::new(
+                        io::ErrorKind::NotFound,
                         "in_file path not found",
                     ));
                 }
 
                 // if in_file not a file
                 if !p.is_file() {
-                    return Err(ioa::Error::new(
-                        ioa::ErrorKind::InvalidInput,
+                    return Err(io::Error::new(
+                        io::ErrorKind::InvalidInput,
                         "in_file is not a path to file",
                     ));
                 }
@@ -121,8 +131,8 @@ impl Split {
                 p
             },
             | None => {
-                return Err(ioa::Error::new(
-                    ioa::ErrorKind::InvalidInput,
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
                     "in_file is not set",
                 ))
             },
@@ -134,12 +144,12 @@ impl Split {
 
                 // if out_dir not exists
                 if !p.exists() {
-                    fsa::create_dir_all(&p).await?;
+                    fs::create_dir_all(p)?;
                 } else {
                     // if out_dir not a directory
                     if p.is_file() {
-                        return Err(ioa::Error::new(
-                            ioa::ErrorKind::InvalidInput,
+                        return Err(io::Error::new(
+                            io::ErrorKind::InvalidInput,
                             "out_dir is not a directory",
                         ));
                     }
@@ -148,8 +158,8 @@ impl Split {
                 p
             },
             | None => {
-                return Err(ioa::Error::new(
-                    ioa::ErrorKind::InvalidInput,
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
                     "out_dir is not set",
                 ))
             },
@@ -159,13 +169,13 @@ impl Split {
 
         let buffer_capacity: usize = chunk_size.min(self.cap_max);
 
-        let input: fsa::File =
-            fsa::OpenOptions::new().read(true).open(in_file).await?;
+        let input: fs::File =
+            fs::OpenOptions::new().read(true).open(in_file)?;
 
-        let file_size: usize = input.metadata().await?.len() as usize;
+        let file_size: usize = input.metadata()?.len() as usize;
 
-        let mut reader: ioa::BufReader<fsa::File> =
-            ioa::BufReader::with_capacity(buffer_capacity, input);
+        let mut reader: io::BufReader<fs::File> =
+            io::BufReader::with_capacity(buffer_capacity, input);
 
         let mut buffer: Vec<u8> = vec![0; chunk_size];
 
@@ -174,7 +184,7 @@ impl Split {
         let mut current: usize = 0;
 
         loop {
-            let read: usize = reader.read(&mut buffer[current..]).await?;
+            let read: usize = reader.read(&mut buffer[current..])?;
 
             if read == 0 {
                 if current > 0 {
@@ -182,19 +192,18 @@ impl Split {
                     let output_path: PathBuf =
                         out_dir.join(total_chunks.to_string());
 
-                    let output: fsa::File = fsa::OpenOptions::new()
+                    let output: fs::File = fs::OpenOptions::new()
                         .create(true)
                         .truncate(true)
                         .write(true)
-                        .open(output_path)
-                        .await?;
+                        .open(output_path)?;
 
-                    let mut writer: ioa::BufWriter<fsa::File> =
-                        ioa::BufWriter::with_capacity(buffer_capacity, output);
+                    let mut writer: io::BufWriter<fs::File> =
+                        io::BufWriter::with_capacity(buffer_capacity, output);
 
-                    writer.write_all(&buffer[..current]).await?;
+                    writer.write_all(&buffer[..current])?;
 
-                    writer.flush().await?;
+                    writer.flush()?;
 
                     total_chunks += 1;
                 }
@@ -209,19 +218,18 @@ impl Split {
                 let output_path: PathBuf =
                     out_dir.join(total_chunks.to_string());
 
-                let output: fsa::File = fsa::OpenOptions::new()
+                let output: fs::File = fs::OpenOptions::new()
                     .create(true)
                     .truncate(true)
                     .write(true)
-                    .open(output_path)
-                    .await?;
+                    .open(output_path)?;
 
-                let mut writer: ioa::BufWriter<fsa::File> =
-                    ioa::BufWriter::with_capacity(buffer_capacity, output);
+                let mut writer: io::BufWriter<fs::File> =
+                    io::BufWriter::with_capacity(buffer_capacity, output);
 
-                writer.write_all(&buffer[..chunk_size]).await?;
+                writer.write_all(&buffer[..chunk_size])?;
 
-                writer.flush().await?;
+                writer.flush()?;
 
                 total_chunks += 1;
 

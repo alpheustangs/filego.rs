@@ -11,32 +11,78 @@
 //!
 //! use filego::split::{Split, SplitResult};
 //!
-//! async fn example() {
+//! fn example() {
 //!     let result: SplitResult = Split::new()
-//!         .in_file("/path/to/file")
+//!         .in_file(PathBuf::from("path").join("to").join("file"))
 //!         .out_dir(PathBuf::from("path").join("to").join("dir"))
 //!         .run()
+//!         .unwrap();
+//! }
+//! ```
+//!
+//! Async version also available with the `async-std` and `tokio` features:
+//!
+//! ```rust
+//! // This is a `async-std` example
+//!
+//! use std::path::PathBuf;
+//!
+//! use filego::split::{
+//!     Split,
+//!     SplitResult,
+//!     async_std::AsyncSplitExt as _,
+//! };
+//!
+//! async fn example() {
+//!     let result: SplitResult = Split::new()
+//!         .in_file(PathBuf::from("path").join("to").join("file"))
+//!         .out_dir(PathBuf::from("path").join("to").join("dir"))
+//!         .run_async()
+//!         .await
+//!         .unwrap();
+//! }
+//! ```
+//!
+//! ```rust
+//! // This is a `tokio` example
+//!
+//! use std::path::PathBuf;
+//!
+//! use filego::split::{
+//!     Split,
+//!     SplitResult,
+//!     tokio::AsyncSplitExt as _,
+//! };
+//!
+//! async fn example() {
+//!     let result: SplitResult = Split::new()
+//!         .in_file(PathBuf::from("path").join("to").join("file"))
+//!         .out_dir(PathBuf::from("path").join("to").join("dir"))
+//!         .run_async()
 //!         .await
 //!         .unwrap();
 //! }
 //! ```
 
-mod functions;
+/// The default chunk size in bytes.
+pub const CHUNK_SIZE_DEFAULT: usize = 2 * 1024 * 1024;
 
-/// Config module.
-pub mod config;
+/// The default maximum size of the buffer capacity in bytes.
+pub const BUFFER_CAPACITY_MAX_DEFAULT: usize = 10 * 1024 * 1024;
 
 /// Split module.
-pub mod split {
-    pub use crate::functions::split::*;
-}
+pub mod split;
 
 /// Check module.
-pub mod check {
-    pub use crate::functions::check::*;
-}
+pub mod check;
 
 /// Merge module.
-pub mod merge {
-    pub use crate::functions::merge::*;
-}
+pub mod merge;
+
+/// Functions implemented with `async-std`.
+#[cfg(feature = "async-std")]
+pub(crate) mod async_std;
+
+/// Functions implemented with `tokio`.
+#[cfg(feature = "tokio")]
+pub(crate) mod tokio;
