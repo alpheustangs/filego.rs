@@ -36,6 +36,7 @@ default = []
 async-std = ["dep:async-std"]
 async_std = ["async-std"]
 tokio = ["dep:tokio"]
+all = ["async-std", "tokio"]
 
 [dependencies.async-std]
 version = "^1.13.0"
