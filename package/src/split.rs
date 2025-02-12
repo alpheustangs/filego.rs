@@ -9,13 +9,13 @@ use crate::{BUFFER_CAPACITY_MAX_DEFAULT, CHUNK_SIZE_DEFAULT};
 /// Run process with `async-std`.
 #[cfg(feature = "async-std")]
 pub mod async_std {
-    pub use crate::async_std::split::AsyncSplitExt;
+    pub use crate::async_std::split::SplitAsyncExt;
 }
 
 /// Run process with `tokio`.
 #[cfg(feature = "tokio")]
 pub mod tokio {
-    pub use crate::tokio::split::AsyncSplitExt;
+    pub use crate::tokio::split::SplitAsyncExt;
 }
 
 /// Process to split file from a path to a directory.

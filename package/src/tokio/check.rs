@@ -8,14 +8,14 @@ use crate::check::{
 };
 
 /// Trait for running the check process.
-pub trait AsyncCheckExt {
+pub trait CheckAsyncExt {
     /// Run the check process asynchronously.
     fn run_async(
         &self
     ) -> impl std::future::Future<Output = io::Result<CheckResult>> + Send;
 }
 
-impl AsyncCheckExt for Check {
+impl CheckAsyncExt for Check {
     async fn run_async(&self) -> io::Result<CheckResult> {
         let in_dir: &Path = match self.in_dir {
             | Some(ref p) => {

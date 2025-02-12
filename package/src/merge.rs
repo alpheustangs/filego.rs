@@ -9,13 +9,13 @@ use crate::BUFFER_CAPACITY_MAX_DEFAULT;
 /// Run process with `async-std`.
 #[cfg(feature = "async-std")]
 pub mod async_std {
-    pub use crate::async_std::merge::AsyncMergeExt;
+    pub use crate::async_std::merge::MergeAsyncExt;
 }
 
 /// Run process with `tokio`.
 #[cfg(feature = "tokio")]
 pub mod tokio {
-    pub use crate::tokio::merge::AsyncMergeExt;
+    pub use crate::tokio::merge::MergeAsyncExt;
 }
 
 /// Process to merge chunks from a directory to a path.

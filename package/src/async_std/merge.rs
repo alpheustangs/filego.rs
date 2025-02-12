@@ -9,14 +9,14 @@ use async_std::{
 use crate::merge::Merge;
 
 /// Trait for running the merge process.
-pub trait AsyncMergeExt {
+pub trait MergeAsyncExt {
     /// Run the check process asynchronously.
     fn run_async(
         &self
     ) -> impl std::future::Future<Output = io::Result<bool>> + Send;
 }
 
-impl AsyncMergeExt for Merge {
+impl MergeAsyncExt for Merge {
     async fn run_async(&self) -> io::Result<bool> {
         let in_dir: &Path = match self.in_dir {
             | Some(ref p) => {

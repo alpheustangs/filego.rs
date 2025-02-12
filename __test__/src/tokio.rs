@@ -4,10 +4,10 @@ mod tests {
 
     use filego::{
         check::{
-            tokio::AsyncCheckExt as _, Check, CheckResult, CheckResultErrorType,
+            tokio::CheckAsyncExt as _, Check, CheckResult, CheckResultErrorType,
         },
-        merge::{tokio::AsyncMergeExt as _, Merge},
-        split::{tokio::AsyncSplitExt as _, Split, SplitResult},
+        merge::{tokio::MergeAsyncExt as _, Merge},
+        split::{tokio::SplitAsyncExt as _, Split, SplitResult},
     };
 
     async fn setup(

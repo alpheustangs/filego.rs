@@ -7,14 +7,14 @@ use async_std::{
 use crate::split::{Split, SplitResult};
 
 /// Trait for running the split process.
-pub trait AsyncSplitExt {
+pub trait SplitAsyncExt {
     /// Run the split process asynchronously.
     fn run_async(
         &self
     ) -> impl std::future::Future<Output = io::Result<SplitResult>> + Send;
 }
 
-impl AsyncSplitExt for Split {
+impl SplitAsyncExt for Split {
     async fn run_async(&self) -> io::Result<SplitResult> {
         let in_file: &Path = match self.in_file {
             | Some(ref p) => {

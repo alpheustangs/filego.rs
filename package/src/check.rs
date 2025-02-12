@@ -6,13 +6,13 @@ use std::{
 /// Run process with `async-std`.
 #[cfg(feature = "async-std")]
 pub mod async_std {
-    pub use crate::async_std::check::AsyncCheckExt;
+    pub use crate::async_std::check::CheckAsyncExt;
 }
 
 /// Run process with `tokio`.
 #[cfg(feature = "tokio")]
 pub mod tokio {
-    pub use crate::tokio::check::AsyncCheckExt;
+    pub use crate::tokio::check::CheckAsyncExt;
 }
 
 /// Error type of the result from the check process.

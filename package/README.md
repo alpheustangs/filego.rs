@@ -30,7 +30,7 @@ use std::path::PathBuf;
 use filego::split::{
     Split, 
     SplitResult, 
-    async_std::AsyncSplitExt as _,
+    async_std::SplitAsyncExt as _,
 };
 
 async fn example() {
@@ -51,7 +51,7 @@ use std::path::PathBuf;
 use filego::split::{
     Split, 
     SplitResult, 
-    tokio::AsyncSplitExt as _,
+    tokio::SplitAsyncExt as _,
 };
 
 async fn example() {
