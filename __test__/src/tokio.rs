@@ -16,7 +16,7 @@ mod tests {
         cache_name: &str
     ) -> (PathBuf, PathBuf, PathBuf, SplitResult) {
         let root: PathBuf = env::current_dir().unwrap();
-        let file_name: &str = "test.png";
+        let file_name: &str = "test.jpg";
         let chunk_size: usize = 1024 * 1024;
 
         let asset_path: PathBuf = root.join("assets").join(file_name);
