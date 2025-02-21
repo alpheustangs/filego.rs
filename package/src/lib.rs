@@ -25,7 +25,7 @@
 //! ```rust
 //! // This is a `async-std` example
 //!
-//! use std::path::PathBuf;
+//! use async_std::path::PathBuf;
 //!
 //! use filego::split::{
 //!     Split,

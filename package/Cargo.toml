@@ -33,7 +33,7 @@ name = "filego"
 path = "src/lib.rs"
 
 [dependencies.async-std]
-version = "^1.13.0"
+workspace = true
 optional = true
 
 [dependencies.tokio]

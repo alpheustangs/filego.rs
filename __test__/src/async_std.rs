@@ -1,6 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use std::{env, fs, path::PathBuf};
+    use std::env;
+
+    use async_std::{fs, path::PathBuf, stream::StreamExt as _};
 
     use filego::{
         check::{
@@ -14,7 +16,7 @@ mod tests {
     async fn setup(
         cache_name: &str
     ) -> (PathBuf, PathBuf, PathBuf, SplitResult) {
-        let root: PathBuf = env::current_dir().unwrap();
+        let root: PathBuf = env::current_dir().unwrap().into();
         let file_name: &str = "test.png";
         let chunk_size: usize = 1024 * 1024;
 
@@ -50,8 +52,12 @@ mod tests {
     async fn test_split_file_creates_chunks() {
         let (_, cache_dir, _, _) = setup("split_file_creates_chunks").await;
 
-        let chunk_count: usize =
-            fs::read_dir(&cache_dir).unwrap().filter_map(Result::ok).count();
+        let chunk_count: i32 = fs::read_dir(&cache_dir)
+            .await
+            .unwrap()
+            .filter_map(Result::ok)
+            .fold(0, |acc, _| acc + 1)
+            .await;
 
         assert!(chunk_count > 0, "No chunks were created.");
     }
@@ -133,21 +139,21 @@ mod tests {
             .unwrap();
 
         assert!(
-            output_path.exists(),
+            output_path.exists().await,
             "Output file should be created after merging."
         );
     }
 
     #[tokio::test]
     async fn test_merge_on_empty_cache_dir() {
-        let root: PathBuf = env::current_dir().unwrap();
+        let root: PathBuf = env::current_dir().unwrap().into();
         let empty_cache_dir: PathBuf = root
             .join(".media")
             .join("cache")
             .join("async_std")
             .join("empty_test");
 
-        fs::create_dir_all(&empty_cache_dir).unwrap();
+        fs::create_dir_all(&empty_cache_dir).await.unwrap();
 
         let output_path: PathBuf = root
             .join(".media")

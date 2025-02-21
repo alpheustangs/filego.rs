@@ -4,5 +4,6 @@ edition = "2024"
 publish = false
 
 [dependencies]
+async-std = { workspace = true }
 filego = { workspace = true }
 tokio = { version = "^1.43.0", features = ["macros", "rt"] }

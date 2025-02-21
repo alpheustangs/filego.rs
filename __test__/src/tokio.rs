@@ -1,6 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use std::{env, fs, path::PathBuf};
+    use std::{env, path::PathBuf};
+
+    use tokio::fs::{self, ReadDir};
 
     use filego::{
         check::{
@@ -46,8 +48,13 @@ mod tests {
     async fn test_split_file_creates_chunks() {
         let (_, cache_dir, _, _) = setup("split_file_creates_chunks").await;
 
-        let chunk_count: usize =
-            fs::read_dir(&cache_dir).unwrap().filter_map(Result::ok).count();
+        let mut read_dir: ReadDir = fs::read_dir(&cache_dir).await.unwrap();
+
+        let mut chunk_count: usize = 0;
+
+        while let Ok(Some(_)) = read_dir.next_entry().await {
+            chunk_count += 1;
+        }
 
         assert!(chunk_count > 0, "No chunks were created.");
     }
@@ -140,7 +147,7 @@ mod tests {
         let empty_cache_dir: PathBuf =
             root.join(".media").join("cache").join("tokio").join("empty_test");
 
-        fs::create_dir_all(&empty_cache_dir).unwrap();
+        fs::create_dir_all(&empty_cache_dir).await.unwrap();
 
         let output_path: PathBuf = root
             .join(".media")

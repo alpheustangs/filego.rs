@@ -11,6 +11,10 @@
 - Export `CHUNK_SIZE_DEFAULT`
 - Export `BUFFER_CAPACITY_MAX_DEFAULT`
 
+### What's Changed
+
+- Update to 2024 edition
+
 ### Migrating from 0.4.x to 0.5.0
 
 `tokio` feature is required for tokio extension.
