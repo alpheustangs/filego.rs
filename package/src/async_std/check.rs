@@ -42,7 +42,7 @@ impl CheckAsyncExt for Check {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "in_dir is not set",
-                ))
+                ));
             },
         };
 
@@ -52,7 +52,7 @@ impl CheckAsyncExt for Check {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "file_size is not set",
-                ))
+                ));
             },
         };
 
@@ -62,7 +62,7 @@ impl CheckAsyncExt for Check {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "total_chunks is not set",
-                ))
+                ));
             },
         };
 

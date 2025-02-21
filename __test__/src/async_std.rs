@@ -4,11 +4,11 @@ mod tests {
 
     use filego::{
         check::{
-            async_std::CheckAsyncExt as _, Check, CheckResult,
-            CheckResultErrorType,
+            Check, CheckResult, CheckResultErrorType,
+            async_std::CheckAsyncExt as _,
         },
-        merge::{async_std::MergeAsyncExt as _, Merge},
-        split::{async_std::SplitAsyncExt as _, Split, SplitResult},
+        merge::{Merge, async_std::MergeAsyncExt as _},
+        split::{Split, SplitResult, async_std::SplitAsyncExt as _},
     };
 
     async fn setup(

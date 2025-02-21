@@ -43,7 +43,7 @@ impl SplitAsyncExt for Split {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "in_file is not set",
-                ))
+                ));
             },
         };
 
@@ -70,7 +70,7 @@ impl SplitAsyncExt for Split {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "out_dir is not set",
-                ))
+                ));
             },
         };
 

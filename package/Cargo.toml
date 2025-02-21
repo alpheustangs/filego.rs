@@ -2,7 +2,7 @@
 name = "filego"
 version = "0.5.0"
 authors = ["Alpheus Tang"]
-edition = "2021"
+edition = "2024"
 description = """
 A file splitting & merging solution
 """

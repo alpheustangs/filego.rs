@@ -112,7 +112,7 @@ impl Merge {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "in_dir is not set",
-                ))
+                ));
             },
         };
 
@@ -122,7 +122,7 @@ impl Merge {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "out_file is not set",
-                ))
+                ));
             },
         };
 
