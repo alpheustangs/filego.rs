@@ -6,13 +6,27 @@ use std::{
 
 use crate::BUFFER_CAPACITY_MAX_DEFAULT;
 
-/// Run process with `async-std`.
+/// Run asynchronously with `async-std`/`async_std` feature.
+///
+/// To use it, add the following code to the `Cargo.toml` file:
+///
+/// ```toml
+/// [dependencies]
+/// filego = { version = "*", features = ["async-std"] }
+/// ```
 #[cfg(feature = "async-std")]
 pub mod async_std {
     pub use crate::async_std::merge::MergeAsyncExt;
 }
 
-/// Run process with `tokio`.
+/// Run asynchronously with `tokio` feature.
+///
+/// To use it, add the following code to the `Cargo.toml` file:
+///
+/// ```toml
+/// [dependencies]
+/// filego = { version = "*", features = ["tokio"] }
+/// ```
 #[cfg(feature = "tokio")]
 pub mod tokio {
     pub use crate::tokio::merge::MergeAsyncExt;
@@ -27,13 +41,11 @@ pub mod tokio {
 ///
 /// use filego::merge::Merge;
 ///
-/// fn example() {
-///     let result: bool = Merge::new()
-///         .in_dir(PathBuf::from("path").join("to").join("dir"))
-///         .out_file(PathBuf::from("path").join("to").join("file"))
-///         .run()
-///         .unwrap();
-/// }
+/// let result: bool = Merge::new()
+///     .in_dir(PathBuf::from("path").join("to").join("dir"))
+///     .out_file(PathBuf::from("path").join("to").join("file"))
+///     .run()
+///     .unwrap();
 /// ```
 #[derive(Debug, Clone)]
 pub struct Merge {
@@ -74,7 +86,7 @@ impl Merge {
     ///
     /// By default, the buffer capacity is based on the size of the inputs in
     /// the input directory. The buffer capacity is limited and will not
-    /// exceed [`BUFFER_CAPACITY_MAX`]. The default value is recommended
+    /// exceed [`BUFFER_CAPACITY_MAX_DEFAULT`]. The default value is recommended
     /// unless a large size file will be processed through the split process.
     pub fn max_buffer_capacity(
         mut self,

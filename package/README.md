@@ -11,13 +11,11 @@ use std::path::PathBuf;
 
 use filego::split::{Split, SplitResult};
 
-fn example() {
-    let result: SplitResult = Split::new()
-        .in_file(PathBuf::from("path").join("to").join("file"))
-        .out_dir(PathBuf::from("path").join("to").join("dir"))
-        .run()
-        .unwrap();
-}
+let result: SplitResult = Split::new()
+    .in_file(PathBuf::from("path").join("to").join("file"))
+    .out_dir(PathBuf::from("path").join("to").join("dir"))
+    .run()
+    .unwrap();
 ```
 
 Async version also available with the `async-std`/`async_std` and `tokio` features:
@@ -28,19 +26,17 @@ Async version also available with the `async-std`/`async_std` and `tokio` featur
 use async_std::path::PathBuf;
 
 use filego::split::{
-    Split, 
-    SplitResult, 
+    Split,
+    SplitResult,
     async_std::SplitAsyncExt as _,
 };
 
-async fn example() {
-    let result: SplitResult = Split::new()
-        .in_file(PathBuf::from("path").join("to").join("file"))
-        .out_dir(PathBuf::from("path").join("to").join("dir"))
-        .run_async()
-        .await
-        .unwrap();
-}
+let result: SplitResult = Split::new()
+    .in_file(PathBuf::from("path").join("to").join("file"))
+    .out_dir(PathBuf::from("path").join("to").join("dir"))
+    .run_async()
+    .await
+    .unwrap();
 ```
 
 ```rust
@@ -49,19 +45,17 @@ async fn example() {
 use std::path::PathBuf;
 
 use filego::split::{
-    Split, 
-    SplitResult, 
+    Split,
+    SplitResult,
     tokio::SplitAsyncExt as _,
 };
 
-async fn example() {
-    let result: SplitResult = Split::new()
-        .in_file(PathBuf::from("path").join("to").join("file"))
-        .out_dir(PathBuf::from("path").join("to").join("dir"))
-        .run_async()
-        .await
-        .unwrap();
-}
+let result: SplitResult = Split::new()
+    .in_file(PathBuf::from("path").join("to").join("file"))
+    .out_dir(PathBuf::from("path").join("to").join("dir"))
+    .run_async()
+    .await
+    .unwrap();
 ```
 
 ## License

@@ -6,13 +6,27 @@ use std::{
 
 use crate::{BUFFER_CAPACITY_MAX_DEFAULT, CHUNK_SIZE_DEFAULT};
 
-/// Run process with `async-std`.
+/// Run asynchronously with `async-std`/`async_std` feature.
+///
+/// To use it, add the following code to the `Cargo.toml` file:
+///
+/// ```toml
+/// [dependencies]
+/// filego = { version = "*", features = ["async-std"] }
+/// ```
 #[cfg(feature = "async-std")]
 pub mod async_std {
     pub use crate::async_std::split::SplitAsyncExt;
 }
 
-/// Run process with `tokio`.
+/// Run asynchronously with `tokio` feature.
+///
+/// To use it, add the following code to the `Cargo.toml` file:
+///
+/// ```toml
+/// [dependencies]
+/// filego = { version = "*", features = ["tokio"] }
+/// ```
 #[cfg(feature = "tokio")]
 pub mod tokio {
     pub use crate::tokio::split::SplitAsyncExt;
@@ -27,13 +41,11 @@ pub mod tokio {
 ///
 /// use filego::split::{Split, SplitResult};
 ///
-/// fn example() {
-///     let result: SplitResult = Split::new()
-///         .in_file(PathBuf::from("path").join("to").join("file"))
-///         .out_dir(PathBuf::from("path").join("to").join("dir"))
-///         .run()
-///         .unwrap();
-/// }
+/// let result: SplitResult = Split::new()
+///     .in_file(PathBuf::from("path").join("to").join("file"))
+///     .out_dir(PathBuf::from("path").join("to").join("dir"))
+///     .run()
+///     .unwrap();
 /// ```
 #[derive(Debug, Clone)]
 pub struct Split {
@@ -96,7 +108,7 @@ impl Split {
     ///
     /// By default, the buffer capacity is based on the `chunk_size`.
     /// The buffer capacity is limited and will not exceed
-    /// [`BUFFER_CAPACITY_MAX`]. The default value is recommended unless
+    /// [`BUFFER_CAPACITY_MAX_DEFAULT`]. The default value is recommended unless
     /// a large size file will be processed through the split process.
     pub fn max_buffer_capacity(
         mut self,

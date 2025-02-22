@@ -3,13 +3,27 @@ use std::{
     path::{Path, PathBuf},
 };
 
-/// Run process with `async-std`.
+/// Run asynchronously with `async-std`/`async_std` feature.
+///
+/// To use it, add the following code to the `Cargo.toml` file:
+///
+/// ```toml
+/// [dependencies]
+/// filego = { version = "*", features = ["async-std"] }
+/// ```
 #[cfg(feature = "async-std")]
 pub mod async_std {
     pub use crate::async_std::check::CheckAsyncExt;
 }
 
-/// Run process with `tokio`.
+/// Run asynchronously with `tokio` feature.
+///
+/// To use it, add the following code to the `Cargo.toml` file:
+///
+/// ```toml
+/// [dependencies]
+/// filego = { version = "*", features = ["tokio"] }
+/// ```
 #[cfg(feature = "tokio")]
 pub mod tokio {
     pub use crate::tokio::check::CheckAsyncExt;
@@ -81,14 +95,12 @@ pub struct CheckResult {
 ///
 /// use filego::check::{Check, CheckResult};
 ///
-/// fn example() {
-///     let result: CheckResult = Check::new()
-///         .in_dir(PathBuf::from("path").join("to").join("dir"))
-///         .file_size(0) // result from split function...
-///         .total_chunks(0) // result from split function...
-///         .run()
-///         .unwrap();
-/// }
+/// let result: CheckResult = Check::new()
+///     .in_dir(PathBuf::from("path").join("to").join("dir"))
+///     .file_size(0) // result from split function...
+///     .total_chunks(0) // result from split function...
+///     .run()
+///     .unwrap();
 /// ```
 #[derive(Debug, Clone)]
 pub struct Check {

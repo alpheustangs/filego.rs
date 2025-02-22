@@ -11,13 +11,11 @@
 //!
 //! use filego::split::{Split, SplitResult};
 //!
-//! fn example() {
-//!     let result: SplitResult = Split::new()
-//!         .in_file(PathBuf::from("path").join("to").join("file"))
-//!         .out_dir(PathBuf::from("path").join("to").join("dir"))
-//!         .run()
-//!         .unwrap();
-//! }
+//! let result: SplitResult = Split::new()
+//!     .in_file(PathBuf::from("path").join("to").join("file"))
+//!     .out_dir(PathBuf::from("path").join("to").join("dir"))
+//!     .run()
+//!     .unwrap();
 //! ```
 //!
 //! Async version also available with the `async-std` and `tokio` features:
@@ -33,14 +31,14 @@
 //!     async_std::SplitAsyncExt as _,
 //! };
 //!
-//! async fn example() {
-//!     let result: SplitResult = Split::new()
-//!         .in_file(PathBuf::from("path").join("to").join("file"))
-//!         .out_dir(PathBuf::from("path").join("to").join("dir"))
-//!         .run_async()
-//!         .await
-//!         .unwrap();
-//! }
+//! # async fn example() {
+//! let result: SplitResult = Split::new()
+//!     .in_file(PathBuf::from("path").join("to").join("file"))
+//!     .out_dir(PathBuf::from("path").join("to").join("dir"))
+//!     .run_async()
+//!     .await
+//!     .unwrap();
+//! # }
 //! ```
 //!
 //! ```no_run
@@ -54,14 +52,14 @@
 //!     tokio::SplitAsyncExt as _,
 //! };
 //!
-//! async fn example() {
-//!     let result: SplitResult = Split::new()
-//!         .in_file(PathBuf::from("path").join("to").join("file"))
-//!         .out_dir(PathBuf::from("path").join("to").join("dir"))
-//!         .run_async()
-//!         .await
-//!         .unwrap();
-//! }
+//! # async fn example() {
+//! let result: SplitResult = Split::new()
+//!     .in_file(PathBuf::from("path").join("to").join("file"))
+//!     .out_dir(PathBuf::from("path").join("to").join("dir"))
+//!     .run_async()
+//!     .await
+//!     .unwrap();
+//! # }
 //! ```
 
 /// The default chunk size in bytes.
