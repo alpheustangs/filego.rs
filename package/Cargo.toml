@@ -1,8 +1,9 @@
 [package]
 name = "filego"
-version = "0.4.1"
+version = "0.5.0"
 authors = ["Alpheus Tang"]
-edition = "2021"
+edition = "2024"
+rust-version = "1.85.0"
 description = """
 A file splitting & merging solution
 """
@@ -31,5 +32,18 @@ include = [
 name = "filego"
 path = "src/lib.rs"
 
-[dependencies]
-tokio = { version = "^1.43.0", features = ["fs", "io-util"] }
+[dependencies.async-std]
+workspace = true
+optional = true
+
+[dependencies.tokio]
+version = "^1.43.0"
+optional = true
+features = ["fs", "io-util"]
+
+[features]
+default = []
+async-std = ["dep:async-std"]
+async_std = ["async-std"]
+tokio = ["dep:tokio"]
+all = ["async-std", "tokio"]

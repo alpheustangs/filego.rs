@@ -6,4 +6,8 @@ members = [
 ]
 
 [workspace.dependencies]
-filego = { path = "./package" }
+async-std = "^1.13.0"
+
+[workspace.dependencies.filego]
+path = "./package"
+features = ["all"]

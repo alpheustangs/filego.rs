@@ -1,3 +1,52 @@
+## 0.5.0 (2025-02-22)
+
+### Breaking Changes
+
+- Tokio based functions moved to `tokio` module (require `tokio` feature)
+
+### What's New
+
+- Add support for synchronize functions
+- Add support for `async-std` (require `async-std`/`async_std` feature)
+- Add `from` function to create a new process from existing process
+
+### What's Changed
+
+- Update to 2024 edition
+- Move `CHUNK_SIZE_DEFAULT`
+- Move `BUFFER_CAPACITY_MAX_DEFAULT`
+
+### Migrating from 0.4.x to 0.5.0
+
+`tokio` feature is required for tokio extension.
+
+```diff
+- filego = { version = "~0.4.1" }
++ filego = { version = "~0.5.0", features = ["tokio"] }
+```
+
+This is a migration example for split process:
+
+```diff
+use std::path::PathBuf;
+
+use filego::split::{
+    Split, 
+    SplitResult, 
++   tokio::SplitAsyncExt as _,
+};
+
+async fn example() {
+    let result: SplitResult = Split::new()
+        .in_file(PathBuf::from("path").join("to").join("file"))
+        .out_dir(PathBuf::from("path").join("to").join("dir"))
+-       .run()
++       .run_async()
+        .await
+        .unwrap();
+}
+```
+
 ## 0.4.1 (2024-12-16)
 
 ### What's Changed

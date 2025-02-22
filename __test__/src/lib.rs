@@ -1,22 +1,25 @@
+pub mod async_std;
+
+pub mod tokio;
+
 #[cfg(test)]
 mod tests {
+    use std::{env, fs, path::PathBuf};
+
     use filego::{
         check::{Check, CheckResult, CheckResultErrorType},
         merge::Merge,
         split::{Split, SplitResult},
     };
-    use std::{env, fs, path::PathBuf};
 
-    async fn setup(
-        cache_name: &str
-    ) -> (PathBuf, PathBuf, PathBuf, SplitResult) {
+    fn setup(cache_name: &str) -> (PathBuf, PathBuf, PathBuf, SplitResult) {
         let root: PathBuf = env::current_dir().unwrap();
-        let file_name: &str = "test.png";
+        let file_name: &str = "test.jpg";
         let chunk_size: usize = 1024 * 1024;
 
         let asset_path: PathBuf = root.join("assets").join(file_name);
         let cache_dir: PathBuf =
-            root.join(".media").join("cache").join(cache_name);
+            root.join(".media").join("cache").join("std").join(cache_name);
 
         // split file
         let split_result: SplitResult = Split::new()
@@ -24,20 +27,23 @@ mod tests {
             .out_dir(&cache_dir)
             .chunk_size(chunk_size)
             .run()
-            .await
             .unwrap();
 
         (
             root.clone(),
             cache_dir,
-            root.join(".media").join("output").join(cache_name).join(file_name),
+            root.join(".media")
+                .join("output")
+                .join("std")
+                .join(cache_name)
+                .join(file_name),
             split_result,
         )
     }
 
     #[tokio::test]
     async fn test_split_file_creates_chunks() {
-        let (_, cache_dir, _, _) = setup("split_file_creates_chunks").await;
+        let (_, cache_dir, _, _) = setup("split_file_creates_chunks");
 
         let chunk_count: usize =
             fs::read_dir(&cache_dir).unwrap().filter_map(Result::ok).count();
@@ -48,14 +54,13 @@ mod tests {
     #[tokio::test]
     async fn test_check_with_missing_chunks() {
         let (_, cache_dir, _, split_result) =
-            setup("check_with_missing_chunks").await;
+            setup("check_with_missing_chunks");
 
         let check_result: CheckResult = Check::new()
             .in_dir(&cache_dir)
             .file_size(split_result.file_size)
             .total_chunks(split_result.total_chunks + 1)
             .run()
-            .await
             .unwrap();
 
         assert!(
@@ -70,15 +75,13 @@ mod tests {
 
     #[tokio::test]
     async fn test_check_with_size_error() {
-        let (_, cache_dir, _, split_result) =
-            setup("check_with_size_error").await;
+        let (_, cache_dir, _, split_result) = setup("check_with_size_error");
 
         let check_result: CheckResult = Check::new()
             .in_dir(&cache_dir)
             .file_size(split_result.file_size + 1)
             .total_chunks(split_result.total_chunks)
             .run()
-            .await
             .unwrap();
 
         assert!(
@@ -93,14 +96,13 @@ mod tests {
 
     #[tokio::test]
     async fn test_successful_check() {
-        let (_, cache_dir, _, split_result) = setup("successful_check").await;
+        let (_, cache_dir, _, split_result) = setup("successful_check");
 
         let check_result: CheckResult = Check::new()
             .in_dir(&cache_dir)
             .file_size(split_result.file_size)
             .total_chunks(split_result.total_chunks)
             .run()
-            .await
             .unwrap();
 
         assert!(
@@ -111,15 +113,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_merge_creates_output_file() {
-        let (_, cache_dir, output_path, _) =
-            setup("merge_creates_output_file").await;
+        let (_, cache_dir, output_path, _) = setup("merge_creates_output_file");
 
-        Merge::new()
-            .in_dir(&cache_dir)
-            .out_file(&output_path)
-            .run()
-            .await
-            .unwrap();
+        Merge::new().in_dir(&cache_dir).out_file(&output_path).run().unwrap();
 
         assert!(
             output_path.exists(),
@@ -131,13 +127,14 @@ mod tests {
     async fn test_merge_on_empty_cache_dir() {
         let root: PathBuf = env::current_dir().unwrap();
         let empty_cache_dir: PathBuf =
-            root.join(".media").join("cache").join("empty_test");
+            root.join(".media").join("cache").join("std").join("empty_test");
 
         fs::create_dir_all(&empty_cache_dir).unwrap();
 
         let output_path: PathBuf = root
             .join(".media")
             .join("output")
+            .join("std")
             .join("empty_test")
             .join("output.txt");
 
@@ -146,7 +143,6 @@ mod tests {
                 .in_dir(&empty_cache_dir)
                 .out_file(&output_path)
                 .run()
-                .await
                 .is_err(),
             "Merge should fail with an empty cache directory."
         );
