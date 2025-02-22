@@ -8,12 +8,12 @@
 
 - Add support for synchronize functions
 - Add support for `async-std` (require `async-std`/`async_std` feature)
-- Export `CHUNK_SIZE_DEFAULT`
-- Export `BUFFER_CAPACITY_MAX_DEFAULT`
 
 ### What's Changed
 
 - Update to 2024 edition
+- Move `CHUNK_SIZE_DEFAULT`
+- Move `BUFFER_CAPACITY_MAX_DEFAULT`
 
 ### Migrating from 0.4.x to 0.5.0
 

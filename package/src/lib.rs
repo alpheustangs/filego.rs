@@ -22,7 +22,7 @@
 //!
 //! Async version also available with the `async-std` and `tokio` features:
 //!
-//! ```rust
+//! ```no_run
 //! // This is a `async-std` example
 //!
 //! use async_std::path::PathBuf;
@@ -43,7 +43,7 @@
 //! }
 //! ```
 //!
-//! ```rust
+//! ```no_run
 //! // This is a `tokio` example
 //!
 //! use std::path::PathBuf;
