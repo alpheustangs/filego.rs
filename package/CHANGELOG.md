@@ -1,3 +1,9 @@
+## 0.5.1 (2025-02-22)
+
+### What's Changed
+
+- Update documentation
+
 ## 0.5.0 (2025-02-22)
 
 ### Breaking Changes
@@ -109,7 +115,7 @@ Please refer to docs for the new usage.
 
 ### What's Changed
 
-- Update docs
+- Update documentation
 
 ## 0.2.1 (2024-06-22)
 

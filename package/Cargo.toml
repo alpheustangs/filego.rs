@@ -1,6 +1,6 @@
 [package]
 name = "filego"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["Alpheus Tang"]
 edition = "2024"
 rust-version = "1.85.0"
@@ -27,6 +27,9 @@ include = [
     "Cargo.toml", 
     "README.md",
 ]
+
+[package.metadata.docs.rs]
+features = ["all"]
 
 [lib]
 name = "filego"
