@@ -64,6 +64,11 @@ impl Merge {
         }
     }
 
+    /// Create a new merge process from an existing one.
+    pub fn from<P: Into<Merge>>(process: P) -> Self {
+        process.into()
+    }
+
     /// Set the input directory.
     pub fn in_dir<InDir: AsRef<Path>>(
         mut self,

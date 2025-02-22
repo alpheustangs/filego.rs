@@ -115,6 +115,11 @@ impl Check {
         Self { in_dir: None, file_size: None, total_chunks: None }
     }
 
+    /// Create a new check process from an existing one.
+    pub fn from<P: Into<Check>>(process: P) -> Self {
+        process.into()
+    }
+
     /// Set the input directory.
     pub fn in_dir<InDir: AsRef<Path>>(
         mut self,

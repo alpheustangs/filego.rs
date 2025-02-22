@@ -8,6 +8,7 @@
 
 - Add support for synchronize functions
 - Add support for `async-std` (require `async-std`/`async_std` feature)
+- Add `from` function to create a new process from existing process
 
 ### What's Changed
 

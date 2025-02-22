@@ -75,6 +75,11 @@ impl Split {
         }
     }
 
+    /// Create a new split process from an existing one.
+    pub fn from<P: Into<Split>>(process: P) -> Self {
+        process.into()
+    }
+
     /// Set the input file.
     pub fn in_file<InFile: AsRef<Path>>(
         mut self,
