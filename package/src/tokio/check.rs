@@ -1,7 +1,6 @@
-use async_std::{
-    fs, io,
-    path::{Path, PathBuf},
-};
+use std::path::{Path, PathBuf};
+
+use tokio::{fs, io};
 
 use crate::check::{
     Check, CheckResult, CheckResultError, CheckResultErrorType,
@@ -22,7 +21,7 @@ impl CheckAsyncExt for Check {
                 let p: &Path = p.as_ref();
 
                 // if in_dir not exists
-                if !p.exists().await {
+                if !p.exists() {
                     return Err(io::Error::new(
                         io::ErrorKind::NotFound,
                         "in_dir path not found",
@@ -30,7 +29,7 @@ impl CheckAsyncExt for Check {
                 }
 
                 // if in_dir not a directory
-                if !p.is_dir().await {
+                if !p.is_dir() {
                     return Err(io::Error::new(
                         io::ErrorKind::InvalidInput,
                         "in_dir is not a directory",
@@ -73,7 +72,7 @@ impl CheckAsyncExt for Check {
         for i in 0..total_chunks {
             let target_file: PathBuf = in_dir.join(i.to_string());
 
-            if !target_file.exists().await || !target_file.is_file().await {
+            if !target_file.exists() || !target_file.is_file() {
                 missing.push(i);
                 continue;
             }
