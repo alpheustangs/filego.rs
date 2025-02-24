@@ -1,9 +1,8 @@
-use std::{fs, path::PathBuf};
-
 use async_std::{
-    fs as fsa,
+    fs::{self, ReadDir},
     io::{self, ReadExt as _, WriteExt as _},
-    path::Path,
+    path::{Path, PathBuf},
+    stream::StreamExt,
 };
 
 use crate::merge::Merge;
@@ -59,37 +58,42 @@ impl MergeAsyncExt for Merge {
         };
 
         // check file size for buffer capacity
-        let input_size: usize = if let Some(file) = fs::read_dir(in_dir)?
-            .filter_map(Result::ok)
-            .filter(|entry| entry.path().is_file())
-            .map(|entry| entry.path())
-            .next()
-        {
-            fsa::metadata(file).await?.len() as usize
-        } else {
-            return Err(io::Error::new(
-                io::ErrorKind::NotFound,
-                "No files found in in_dir",
-            ));
-        };
+        let mut entries: ReadDir = fs::read_dir(in_dir).await?;
+
+        let input_size: usize =
+            if let Some(entry) = entries.next().await.transpose()? {
+                if entry.file_type().await?.is_file() {
+                    fs::metadata(entry.path()).await?.len() as usize
+                } else {
+                    return Err(io::Error::new(
+                        io::ErrorKind::NotFound,
+                        "No files found in in_dir",
+                    ));
+                }
+            } else {
+                return Err(io::Error::new(
+                    io::ErrorKind::NotFound,
+                    "No files found in in_dir",
+                ));
+            };
 
         let buffer_capacity: usize = input_size.min(self.cap_max);
 
         // delete outpath target if exists
         if out_file.exists().await {
             if out_file.is_dir().await {
-                fsa::remove_dir_all(&out_file).await?;
+                fs::remove_dir_all(&out_file).await?;
             } else {
-                fsa::remove_file(&out_file).await?;
+                fs::remove_file(&out_file).await?;
             }
         }
 
         // create outpath
         if let Some(parent) = out_file.parent() {
-            fsa::create_dir_all(parent).await?;
+            fs::create_dir_all(parent).await?;
         }
 
-        let output: fsa::File = fsa::OpenOptions::new()
+        let output: fs::File = fs::OpenOptions::new()
             .create(true)
             .truncate(false)
             .write(true)
@@ -97,15 +101,19 @@ impl MergeAsyncExt for Merge {
             .await?;
 
         // writer
-        let mut writer: io::BufWriter<fsa::File> =
+        let mut writer: io::BufWriter<fs::File> =
             io::BufWriter::with_capacity(buffer_capacity, output);
 
         // get inputs
-        let mut entries: Vec<PathBuf> = fs::read_dir(in_dir)?
-            .filter_map(Result::ok)
-            .filter(|entry| entry.path().is_file())
-            .map(|entry| entry.path())
-            .collect();
+        let mut entries: Vec<PathBuf> = Vec::new();
+
+        let mut dir_entries = fs::read_dir(in_dir).await?;
+
+        while let Some(entry) = dir_entries.next().await.transpose()? {
+            if entry.file_type().await?.is_file() {
+                entries.push(entry.path());
+            }
+        }
 
         entries.sort_by_key(|entry| {
             entry
@@ -119,10 +127,10 @@ impl MergeAsyncExt for Merge {
 
         // merge
         for entry in entries {
-            let input: fsa::File =
-                fsa::OpenOptions::new().read(true).open(&entry).await?;
+            let input: fs::File =
+                fs::OpenOptions::new().read(true).open(&entry).await?;
 
-            let mut reader: io::BufReader<fsa::File> =
+            let mut reader: io::BufReader<fs::File> =
                 io::BufReader::with_capacity(buffer_capacity, input);
 
             let mut buffer: Vec<u8> = vec![0; buffer_capacity];
