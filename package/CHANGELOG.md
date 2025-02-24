@@ -1,3 +1,10 @@
+## 0.5.2 (2025-02-24)
+
+### What's Changed
+
+- Fixed issues with async check functions
+- Optimized async merge functions
+
 ## 0.5.1 (2025-02-22)
 
 ### What's Changed
