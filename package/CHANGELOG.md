@@ -1,3 +1,9 @@
+## 0.5.3 (2025-03-12)
+
+### What's Changed
+
+- Downgrade `tokio` dependency from `^1.43.0` to `^1.40.0` for compatibility
+
 ## 0.5.2 (2025-02-24)
 
 ### What's Changed
